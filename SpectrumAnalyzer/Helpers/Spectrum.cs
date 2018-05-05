@@ -56,23 +56,24 @@ namespace SpectrumAnalyzer.Helpers
         public void Quantize()
         {
             QuantizedSpectrum = new List<Bin>();
-            var increment = CalculateIncrement();
-            float position = Bins[0].X;
+            var increment = CalculateIncrement() / 1000;
+            
             QuantizedSpectrum.Add(Bins[0]);
 
             foreach (var bin in Bins.Skip(1))
             {
                 var previous = QuantizedSpectrum.Last();
                 var curX = previous.X + increment;
-                if (curX > bin.X)
+                while (curX < bin.X)
                 {
-                    continue;
+                    var a = curX - previous.X;
+                    var b = bin.X - curX;
+                    var c = bin.Y - previous.Y;
+                    var curY = a * c / (a + b) + previous.Y;
+                    QuantizedSpectrum.Add(new Bin(curX, curY));
+                    previous = QuantizedSpectrum.Last();
+                    curX = previous.X + increment;
                 }
-                var a = curX - previous.X;
-                var b = bin.X - curX;
-                var c = bin.Y - previous.Y;
-                var curY = a * c / (a + b);
-                QuantizedSpectrum.Add(new Bin(curX, curY));
             }
         }
 
@@ -99,12 +100,12 @@ namespace SpectrumAnalyzer.Helpers
             }
             if (QuantizedSpectrum.Count > 0)
             {
-                var result = string.Empty;
+                var result = new string[QuantizedSpectrum.Count];
                 for (int i = 0; i < QuantizedSpectrum.Count; i++)
                 {
-                    result += $"{QuantizedSpectrum[i].X};{QuantizedSpectrum[i].Y}{Environment.NewLine}";
+                    result[i] = $"{QuantizedSpectrum[i].X};{QuantizedSpectrum[i].Y}";
                 }
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"\quantized_spectrum.csv", result);
+                File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\quantized_spectrum.csv", result);
             }
         }
 
