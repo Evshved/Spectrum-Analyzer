@@ -1,0 +1,86 @@
+﻿<Window x:Class="SpectrumAnalyzer.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpectrumAnalyzer"
+        xmlns:helpers="clr-namespace:SpectrumAnalyzer.Helpers"
+        mc:Ignorable="d"
+        Title="Spectrum Analyzer" Height="600" Width="800">
+    <Window.DataContext>
+        <helpers:Plotter/>
+    </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary Source="..\Resources\Resources.xaml" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_New"/>
+                    <MenuItem x:Name="Menu_Open" Header="_Open" Click="Menu_Open_Click"/>
+                    <MenuItem Header="_Save"/>
+                    <Separator/>
+                    <MenuItem x:Name="Menu_Exit" Header="_Exit" Click="Menu_Exit_Click" />
+                </MenuItem>
+                <MenuItem Header="_Options">
+                    <MenuItem Header="_TODO"/>
+                </MenuItem>
+                <MenuItem Header="_About">
+                    <MenuItem Header="_Help"/>
+                    <MenuItem Header="_About creators"/>
+                    <MenuItem Header="_Contacts"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <ToolBar Grid.Row="1" VerticalAlignment="Top">
+            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Save</Button>
+            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Load</Button>
+            <Separator Margin="10,0,0,0"/>
+            <Button x:Name="Button_AddToDB" BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4" Click="Button_AddToDB_Click">Add to DB</Button>
+            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Compare to Etalon</Button>
+            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Search</Button>
+            <Separator Margin="10,0,0,0"/>
+            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Detect</Button>
+        </ToolBar>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ListBox x:Name="ListBox_Files_Queue" MinWidth="120" MaxWidth="180" MaxHeight="760" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" Grid.Column="0" SelectionChanged="ListBox_Files_Queue_SelectionChanged">
+            </ListBox>
+            <oxy:PlotView x:Name="PlotBox" Model="{Binding PlotFrame}" Grid.Column="1"/>
+            <ToolBarTray Orientation="Vertical" Grid.Column="2">
+                <ToolBar MaxWidth="30">
+                    <Button HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,10,0,0" Click="Button_Click">
+                        <ContentControl VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_Plus}"/>
+                    </Button>
+                    <Button Margin="0,10,0,0">
+                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_Minus}"/>
+                    </Button>
+                    <Separator/>
+                    <Button Margin="0,10,0,0">
+                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_BorderSelectorWidth}"/>
+                    </Button>
+                    <Button Margin="0,10,0,0">
+                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_LeftBorder}"/>
+                    </Button>
+                    <Button Margin="0,10,0,0">
+                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_RightBorder}"/>
+                    </Button>
+                    <Button></Button>
+                </ToolBar>
+            </ToolBarTray>
+        </Grid>
+    </Grid>
+</Window>
