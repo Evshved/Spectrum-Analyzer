@@ -62,13 +62,6 @@
             <oxy:PlotView x:Name="PlotBox" Model="{Binding PlotFrame}" Grid.Column="1"/>
             <ToolBarTray Orientation="Vertical" Grid.Column="2">
                 <ToolBar MaxWidth="30">
-                    <Button HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,10,0,0" Click="Button_Click">
-                        <ContentControl VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_Plus}"/>
-                    </Button>
-                    <Button Margin="0,10,0,0">
-                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_Minus}"/>
-                    </Button>
-                    <Separator/>
                     <Button Margin="0,10,0,0">
                         <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_BorderSelectorWidth}"/>
                     </Button>

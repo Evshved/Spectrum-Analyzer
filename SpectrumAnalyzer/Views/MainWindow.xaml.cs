@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using System.Windows.Controls;
 using SpectrumAnalyzer.Helpers;
 using static SpectrumAnalyzer.Helpers.Plotter;
+using System.Linq;
 
 namespace SpectrumAnalyzer.Views
 {
@@ -25,50 +26,35 @@ namespace SpectrumAnalyzer.Views
 
         private void Menu_Open_Click(object sender, RoutedEventArgs e)
         {
-            Stream myStream = null;
-            OpenFileDialog openFileDialogElement = new OpenFileDialog();
-
-            openFileDialogElement.InitialDirectory = Environment.CurrentDirectory;
-            openFileDialogElement.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialogElement.FilterIndex = 2;
-            openFileDialogElement.RestoreDirectory = true;
-            openFileDialogElement.Multiselect = true;
-
-            if (openFileDialogElement.ShowDialog() == true)
+            OpenFileDialog dialog = new OpenFileDialog
             {
-                foreach (String filePath in openFileDialogElement.FileNames)
+                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                Multiselect = true
+            };
+
+
+            if (dialog.ShowDialog() == true)
+            {
+                if (dialog.FileNames.Any())
                 {
-                    try
-                    {
-
-                        var fileName = Path.GetFileName(filePath);
-                        Console.WriteLine(fileName);
-                        Console.WriteLine(filePath);
-
-                        if (Path.GetExtension(fileName) == ".txt")
-                        {
-                            using (StreamReader reader = new StreamReader(filePath))
-                            {
-                                // Read for base API
-                                String line = reader.ReadToEnd();
-                                if (!string.IsNullOrEmpty(line))
-                                {
-                                    ListBox_Files_Queue.Items.Add(new ListBoxFileItem() { fileName = fileName, filePath = filePath });
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
-                    }
+                    AddToQueue(dialog.FileNames);
                 }
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void AddToQueue(string[] fileNames)
         {
-            MessageBox.Show("Охуенная кнопка!");
+            foreach (var path in fileNames)
+            {
+                var fileName = Path.GetFileName(path);
+                var extension = Path.GetExtension(fileName);
+                if (extension == ".txt")
+                {
+                    ListBox_Files_Queue.Items.Add(new ListBoxFileItem() { fileName = fileName, filePath = path });
+                }
+            }
         }
 
         private void Button_AddToDB_Click(object sender, RoutedEventArgs e)
