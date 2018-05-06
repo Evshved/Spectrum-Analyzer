@@ -42,10 +42,10 @@ namespace SpectrumAnalyzer.Helpers
 
             var series1 = new OxyPlot.Series.LineSeries
             {
-                MarkerType = MarkerType.Circle,
-                MarkerSize = 5,
-                MarkerStroke = OxyColors.White
+                StrokeThickness = 1,
+                Color = OxyColors.Red
             };
+
             series1.Points.Add(new DataPoint(0, 6));
             series1.Points.Add(new DataPoint(1, 2));
             series1.Points.Add(new DataPoint(2, 4));
@@ -54,6 +54,12 @@ namespace SpectrumAnalyzer.Helpers
             series1.Points.Add(new DataPoint(6, 6));
             series1.Points.Add(new DataPoint(8, 8));
             PlotFrame.Series.Add(series1);
+
+            var series2 = new OxyPlot.Series.LineSeries
+            {
+                StrokeThickness = 1,
+                Color = OxyColors.Tan
+            };
         }
 
         public void Clear()

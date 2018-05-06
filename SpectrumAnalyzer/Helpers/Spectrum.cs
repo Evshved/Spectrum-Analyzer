@@ -56,7 +56,7 @@ namespace SpectrumAnalyzer.Helpers
         public void Quantize()
         {
             QuantizedSpectrum = new List<Bin>();
-            var increment = CalculateIncrement() / 1000;
+            var increment = CalculateIncrement() * Settings.Precision;
             
             QuantizedSpectrum.Add(Bins[0]);
 
