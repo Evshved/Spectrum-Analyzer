@@ -59,7 +59,20 @@
             </Grid.ColumnDefinitions>
             <ListBox x:Name="ListBox_Files_Queue" MinWidth="120" MaxWidth="180" MaxHeight="760" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" Grid.Column="0" SelectionChanged="ListBox_Files_Queue_SelectionChanged">
             </ListBox>
-            <oxy:PlotView x:Name="PlotBox" Model="{Binding PlotFrame}" Grid.Column="1"/>
+            
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <oxy:PlotView x:Name="PlotBox" Model="{Binding PlotFrame}" Grid.Row="0"/>
+                <ToolBar Grid.Row="1">
+                    <Button x:Name="Button_SaveImage" Padding="4" Margin="10,0,0,0" BorderThickness="1" BorderBrush="Black" Click="Button_SaveImage_Click">
+                        Save as PNG
+                    </Button>
+                </ToolBar>
+            </Grid>
+            
             <ToolBarTray Orientation="Vertical" Grid.Column="2">
                 <ToolBar MaxWidth="30">
                     <Button Margin="0,10,0,0">

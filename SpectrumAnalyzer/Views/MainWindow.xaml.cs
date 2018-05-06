@@ -90,5 +90,22 @@ namespace SpectrumAnalyzer.Views
                 return string.Empty;
             }
         }
+
+        private void Button_SaveImage_Click(object sender, RoutedEventArgs e)
+        {
+            var plotModel = DataContext as Plotter;
+
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                FileName = plotModel.PlotFrame.Title + ".png",
+                Filter = "PNG (*.png)|*.png",
+                FilterIndex = 1
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                IO.SaveImage(plotModel, dialog.FileName, Dispatcher);
+            }
+        }
     }
 }
