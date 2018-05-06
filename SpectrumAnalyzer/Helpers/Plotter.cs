@@ -90,10 +90,13 @@ namespace SpectrumAnalyzer.Helpers
 
             var series1 = new OxyPlot.Series.LineSeries
             {
-                MarkerType = MarkerType.Circle,
-                MarkerSize = 5,
-                MarkerStroke = OxyColors.White
+                StrokeThickness = 1,
+                Color = OxyColors.Red
             };
+            if (plotMethod == PlotMethod.Combine)
+            {
+                series1.Color = OxyColors.Blue;
+            }
             for (int i = 0; i < spectrum.Bins.Count; i++)
             {
                 series1.Points.Add(new DataPoint(spectrum.Bins[i].X, spectrum.Bins[i].Y));
@@ -111,14 +114,16 @@ namespace SpectrumAnalyzer.Helpers
             var maxY = spectrum.Bins.Max(x => x.Y);
 
             PlotFrame.Axes.Clear();
-            PlotFrame.Axes.Add(new LinearAxis {
+            PlotFrame.Axes.Add(new LinearAxis
+            {
                 Position = AxisPosition.Bottom,
                 AbsoluteMinimum = minX,
                 AbsoluteMaximum = maxX,
                 Minimum = minX,
                 Maximum = maxX
             });
-            PlotFrame.Axes.Add(new LinearAxis {
+            PlotFrame.Axes.Add(new LinearAxis
+            {
                 Position = AxisPosition.Left,
                 AbsoluteMinimum = minY,
                 AbsoluteMaximum = maxY,
