@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -61,7 +59,7 @@ namespace SpectrumAnalyzer.Helpers
             return new Bin(splitted[0], splitted[1]);
         }
 
-        public Spectrum Quantize()
+        public Spectrum GetQuantized()
         {
             QuantizedSpectrum = new List<Bin>();
             var increment = CalculateIncrement() * Settings.Precision;
@@ -115,26 +113,6 @@ namespace SpectrumAnalyzer.Helpers
                     result[i] = $"{QuantizedSpectrum[i].X};{QuantizedSpectrum[i].Y}";
                 }
                 File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\quantized_spectrum.csv", result);
-            }
-        }
-
-        public class Bin
-        {
-            public float X;
-            public float Y;
-            public Bin(string x, string y)
-            {
-                X = float.Parse(x.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture);
-                Y = float.Parse(y.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture);
-            }
-            public Bin(float x, float y)
-            {
-                X = x;
-                Y = y;
-            }
-            public override string ToString()
-            {
-                return $"X: {this.X}, Y: {this.Y}";
             }
         }
     }

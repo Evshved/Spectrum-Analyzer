@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\Bin.cs" />
     <Compile Include="Helpers\SpectrumProfile.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Helpers\Spectrum.cs" />

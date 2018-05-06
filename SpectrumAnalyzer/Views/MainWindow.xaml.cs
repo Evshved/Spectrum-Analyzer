@@ -3,11 +3,6 @@ using System.Windows;
 using System.IO;
 using Microsoft.Win32;
 using System.Windows.Controls;
-using System.Collections.Generic;
-using OxyPlot;
-using OxyPlot.Series;
-using System.Windows.Media;
-using System.Text;
 using SpectrumAnalyzer.Helpers;
 using static SpectrumAnalyzer.Helpers.Plotter;
 
@@ -90,7 +85,7 @@ namespace SpectrumAnalyzer.Views
             {
                 var spectrum = new Spectrum(contents, fni.fileName);
                 SpectrumProfile profile = new SpectrumProfile(spectrum);
-                profile.Transitions.Add("quantize", spectrum.Quantize());
+                profile.Transitions.Add("quantize", spectrum.GetQuantized());
 
                 ((Plotter)DataContext).Plot(profile.OriginalData, PlotMethod.Replace);
                 ((Plotter)DataContext).Plot(profile.Transitions["quantize"], PlotMethod.Combine);
