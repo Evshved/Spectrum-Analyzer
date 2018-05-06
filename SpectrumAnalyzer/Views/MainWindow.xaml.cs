@@ -89,10 +89,11 @@ namespace SpectrumAnalyzer.Views
             if (!string.IsNullOrEmpty(contents))
             {
                 var spectrum = new Spectrum(contents, fni.fileName);
-                ((Plotter)DataContext).Plot(spectrum, PlotMethod.Replace);
-                spectrum.Quantize();
-                ((Plotter)DataContext).Plot(spectrum, PlotMethod.Combine);
-                spectrum.SaveToFile();
+                SpectrumProfile profile = new SpectrumProfile(spectrum);
+                profile.Transitions.Add("quantize", spectrum.Quantize());
+
+                ((Plotter)DataContext).Plot(profile.OriginalData, PlotMethod.Replace);
+                ((Plotter)DataContext).Plot(profile.Transitions["quantize"], PlotMethod.Combine);
             }
         }
 
