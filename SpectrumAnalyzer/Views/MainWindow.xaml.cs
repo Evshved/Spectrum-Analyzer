@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using SpectrumAnalyzer.Helpers;
 using static SpectrumAnalyzer.Helpers.Plotter;
 using System.Linq;
+using SpectrumAnalyzer.SpectrumsDB;
 
 namespace SpectrumAnalyzer.Views
 {
@@ -59,6 +60,8 @@ namespace SpectrumAnalyzer.Views
 
         private void Button_AddToDB_Click(object sender, RoutedEventArgs e)
         {
+            var database = new Database();
+            //database.put();
             //List<string> data = PrepareForDB();
             MessageBox.Show("Добавлено в БД!");
         }

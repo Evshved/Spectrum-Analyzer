@@ -12,32 +12,37 @@ using System.Threading.Tasks;
 
 namespace SpectrumAnalyzer.SpectrumsDB
 {
-    //TODO:
-    //0. check sql expressions;
-    //1. add overloads;
     public class Database
     {
+        //TODO:
+        //make names shorter
+        //add delete method
         public SQLiteConnection connection;
-        private string dbName;
+        private string _dbName;
 
         public string Name
         {
             get
             {
-                return dbName;
+                return _dbName;
+            }
+
+            set
+            {
+                _dbName = value;
             }
         }
 
         public Database()
         {
-            dbName = "LOCAL.db";
-            Initialize(dbName);
+            Name = "LOCAL.db";
+            Initialize(Name);
         }
 
         public Database(string databaseName)
         {
-            dbName = databaseName;
-            Initialize(dbName);
+            Name = databaseName;
+            Initialize(Name);
         }
 
         private void Initialize(string dbName)
@@ -65,7 +70,7 @@ namespace SpectrumAnalyzer.SpectrumsDB
             }
         }
 
-        public void LoadDataToDB(string table, string title, string data)
+        public void put(string table, string title, string data)
         {
             string query = String.Format("INSERT INTO {0} ('TITLE', 'DATA') VALUES (@title, @data)", table);
             SQLiteCommand command = new SQLiteCommand(query, connection);
@@ -76,14 +81,23 @@ namespace SpectrumAnalyzer.SpectrumsDB
             this.CloseConnection();
         }
 
-        public KeyValuePair<string, string> UploadDataFromDB(string table, string title)
+        public KeyValuePair<string, string> get(string table, string title)
         {
-            string query = String.Format("SELECT DATA FROM {0} WHERE TITLE == {1}", table, title);
+            string query = String.Format("SELECT DATA FROM {0} WHERE TITLE=={1}", table, title);
             SQLiteCommand command = new SQLiteCommand(query, connection);
             this.OpenConnection();
             SQLiteDataReader result = command.ExecuteReader();
             this.CloseConnection();
             return new KeyValuePair<string, string>(result["DATA"].ToString(), title);
+        }
+
+        public void Delete(string table, string title)
+        {
+            string query = String.Format("DELETE FROM {0} WHERE TITLE=={1}", table, title);
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            this.OpenConnection();
+            command.ExecuteNonQuery();
+            this.CloseConnection();
         }
     }
 }
