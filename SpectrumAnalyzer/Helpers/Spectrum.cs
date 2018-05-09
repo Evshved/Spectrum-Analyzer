@@ -93,7 +93,7 @@ namespace SpectrumAnalyzer.Helpers
             }
             return result / (Bins.Count - 1);
         }
-
+        
         public void SaveToFile()
         {
             if (Bins.Count > 0)
