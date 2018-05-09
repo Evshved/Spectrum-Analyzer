@@ -6,9 +6,6 @@ using System.Windows.Controls;
 using SpectrumAnalyzer.Helpers;
 using static SpectrumAnalyzer.Helpers.Plotter;
 using System.Linq;
-using SpectrumAnalyzer.SpectrumsDB;
-using OxyPlot.Series;
-using OxyPlot;
 
 namespace SpectrumAnalyzer.Views
 {
@@ -62,15 +59,7 @@ namespace SpectrumAnalyzer.Views
 
         private void Button_AddToDB_Click(object sender, RoutedEventArgs e)
         {
-            var database = new Database();
-            var title = ((Plotter)DataContext).PlotFrame.Title;
-            var series = ((Plotter)DataContext).PlotFrame.Series[0] as LineSeries;
-            String data = System.String.Empty;
-            foreach(DataPoint point in series.Points)
-            {
-                data += String.Format("({0};{1})", point.X, point.Y);
-            }
-            database.Put("Spectrums", title, data);
+            //List<string> data = PrepareForDB();
             MessageBox.Show("Добавлено в БД!");
         }
 
@@ -122,3 +111,4 @@ namespace SpectrumAnalyzer.Views
         }
     }
 }
+

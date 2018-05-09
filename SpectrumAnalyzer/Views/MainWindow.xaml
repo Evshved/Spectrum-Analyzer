@@ -57,9 +57,18 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ListBox x:Name="ListBox_Files_Queue" MinWidth="120" MaxWidth="180" MaxHeight="760" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" Grid.Column="0" SelectionChanged="ListBox_Files_Queue_SelectionChanged">
-            </ListBox>
-            
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0">
+                    Files
+                </Label>
+                <ListBox x:Name="ListBox_Files_Queue" Grid.Row="1" MinWidth="120" MaxWidth="180" MaxHeight="760" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SelectionChanged="ListBox_Files_Queue_SelectionChanged">
+                </ListBox>
+            </Grid>
+
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -72,7 +81,7 @@
                     </Button>
                 </ToolBar>
             </Grid>
-            
+
             <ToolBarTray Orientation="Vertical" Grid.Column="2">
                 <ToolBar MaxWidth="30">
                     <Button Margin="0,10,0,0">
@@ -87,6 +96,27 @@
                     <Button></Button>
                 </ToolBar>
             </ToolBarTray>
+            <Grid Grid.Column="3">
+                <Grid MinWidth="120" MaxWidth="180" MaxHeight="760">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0">
+                        Search results
+                    </Label>
+                    <ListBox x:Name="ListBox_Results" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+                    </ListBox>
+                    <Label Grid.Row="2">
+                        Transitions
+                    </Label>
+                    <ListBox x:Name="ListBox_Transitions" Grid.Row="3" MinHeight="100" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+                    </ListBox>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
+
