@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SpectrumAnalyzer.Helpers
 {
-    internal class Spectrum
+    public class Spectrum
     {
         private string[] _contents;
 
@@ -116,7 +116,7 @@ namespace SpectrumAnalyzer.Helpers
             }
         }
 
-        internal float[] ToXArray()
+        public float[] ToXArray()
         {
             List<float> result = new List<float>();
             for (int i = 0; i < Bins.Count; i++)
@@ -126,7 +126,7 @@ namespace SpectrumAnalyzer.Helpers
             return result.ToArray();
         }
 
-        internal float[] ToYArray()
+        public float[] ToYArray()
         {
             List<float> result = new List<float>();
             for (int i = 0; i < Bins.Count; i++)

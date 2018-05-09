@@ -6,17 +6,17 @@ namespace SpectrumAnalyzer.Helpers
     public class SpectrumProfile
     {
         #region Locals & Constructors
-        internal Spectrum OriginalData;
-        internal Dictionary<string, Spectrum> Transitions = new Dictionary<string, Spectrum>();
+        public Spectrum OriginalData;
+        public Dictionary<string, Spectrum> Transitions = new Dictionary<string, Spectrum>();
 
-        internal SpectrumProfile(Spectrum spectrum)
+        public SpectrumProfile(Spectrum spectrum)
         {
             OriginalData = spectrum;
         }
         #endregion
 
         #region Methods
-        internal void SearchHH()
+        public void SearchHH()
         {
             int Iterations = 3;
             int AverageWindow = 3;
@@ -586,3 +586,4 @@ namespace SpectrumAnalyzer.Helpers
         #endregion
     }
 }
+

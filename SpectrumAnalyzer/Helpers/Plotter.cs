@@ -23,7 +23,7 @@ namespace SpectrumAnalyzer.Helpers
 
         public PlotModel PlotFrame { get; private set; }
 
-        internal enum PlotMethod
+        public enum PlotMethod
         {
             Replace = 1,
             Combine = 2
@@ -76,7 +76,7 @@ namespace SpectrumAnalyzer.Helpers
             PlotFrame.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Maximum = 10, Minimum = 0 });
         }
 
-        internal void Plot(Spectrum spectrum, PlotMethod plotMethod)
+        public void Plot(Spectrum spectrum, PlotMethod plotMethod)
         {
             if (plotMethod == PlotMethod.Replace)
             {
@@ -132,3 +132,4 @@ namespace SpectrumAnalyzer.Helpers
         }
     }
 }
+

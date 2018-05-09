@@ -5,9 +5,9 @@ using System.Windows.Threading;
 
 namespace SpectrumAnalyzer.Helpers
 {
-    static class IO
+    public static class IO
     {
-        internal static void SaveImage(Plotter plotModel, string fileName, Dispatcher dispatcher)
+        public static void SaveImage(Plotter plotModel, string fileName, Dispatcher dispatcher)
         {
             var thread = new Thread(() =>
             {
@@ -23,3 +23,4 @@ namespace SpectrumAnalyzer.Helpers
         }
     }
 }
+
