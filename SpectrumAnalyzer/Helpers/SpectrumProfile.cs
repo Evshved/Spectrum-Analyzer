@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace SpectrumAnalyzer.Helpers
 {
@@ -7,11 +9,15 @@ namespace SpectrumAnalyzer.Helpers
     {
         #region Locals & Constructors
         public Spectrum OriginalData;
-        public Dictionary<string, Spectrum> Transitions = new Dictionary<string, Spectrum>();
+        public ObservableDictionary<string, Spectrum> Transitions = new ObservableDictionary<string, Spectrum>();
 
         public SpectrumProfile(Spectrum spectrum)
         {
             OriginalData = spectrum;
+            Transitions.ItemAdding += new ObservableDictionary<string, Spectrum>.EventHandler(() => { });
+            Transitions.ItemAdded += new ObservableDictionary<string, Spectrum>.EventHandler(() => { });
+            Transitions.ItemRemoving += new ObservableDictionary<string, Spectrum>.EventHandler(() => { });
+            Transitions.ItemRemoved += new ObservableDictionary<string, Spectrum>.EventHandler(() => { });
         }
         #endregion
 

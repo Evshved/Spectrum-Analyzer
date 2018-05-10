@@ -14,7 +14,6 @@ namespace SpectrumAnalyzer.Views
         public MainWindow()
         {
             InitializeComponent();
-            var a = ListBox_Files_Queue.Items;
         }
 
         private void Menu_Exit_Click(object sender, RoutedEventArgs e)
