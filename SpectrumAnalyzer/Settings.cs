@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Globalization;
 
 namespace SpectrumAnalyzer
 {
@@ -11,10 +12,11 @@ namespace SpectrumAnalyzer
         static Settings()
         {
             _ignoredPhrases = ConfigurationManager.AppSettings["IgnoredPhrases"].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            _precision = float.Parse(ConfigurationManager.AppSettings["Precision"]);
+            _precision = float.Parse((ConfigurationManager.AppSettings["Precision"]).Replace(",", "."), System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
         public static string[] IgnoredPhrases => _ignoredPhrases;
         public static float Precision => _precision;
     }
 }
+
