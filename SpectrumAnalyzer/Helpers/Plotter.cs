@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OxyPlot;
+using OxyPlot.Annotations;
 using OxyPlot.Axes;
+using OxyPlot.Series;
 
 namespace SpectrumAnalyzer.Helpers
 {
@@ -32,33 +35,6 @@ namespace SpectrumAnalyzer.Helpers
         public Plotter()
         {
             Initialize();
-            ShowTestPlot();
-        }
-
-        private void ShowTestPlot()
-        {
-            PlotFrame.Title = "Test Plot";
-
-            var series1 = new OxyPlot.Series.LineSeries
-            {
-                StrokeThickness = 1,
-                Color = OxyColors.Red
-            };
-
-            series1.Points.Add(new DataPoint(0, 6));
-            series1.Points.Add(new DataPoint(1, 2));
-            series1.Points.Add(new DataPoint(2, 4));
-            series1.Points.Add(new DataPoint(3, 2));
-            series1.Points.Add(new DataPoint(4, 7));
-            series1.Points.Add(new DataPoint(6, 6));
-            series1.Points.Add(new DataPoint(8, 8));
-            PlotFrame.Series.Add(series1);
-
-            var series2 = new OxyPlot.Series.LineSeries
-            {
-                StrokeThickness = 1,
-                Color = OxyColors.Tan
-            };
         }
 
         public void Clear()
@@ -76,7 +52,7 @@ namespace SpectrumAnalyzer.Helpers
             PlotFrame.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Maximum = 10, Minimum = 0 });
         }
 
-        public void Plot(Spectrum spectrum, PlotMethod plotMethod)
+        public void Plot(Spectrum spectrum, PlotMethod plotMethod, Action<object, OxyMouseDownEventArgs> onClickCallback)
         {
             if (plotMethod == PlotMethod.Replace)
             {
@@ -87,7 +63,7 @@ namespace SpectrumAnalyzer.Helpers
 
             PlotFrame.Title = spectrum.SpectrumName;
 
-            var series1 = new OxyPlot.Series.LineSeries
+            var series1 = new LineSeries
             {
                 StrokeThickness = 1,
                 Color = OxyColors.Red
@@ -100,9 +76,76 @@ namespace SpectrumAnalyzer.Helpers
             {
                 series1.Points.Add(new DataPoint(spectrum.Bins[i].X, spectrum.Bins[i].Y));
             }
+
+            if (onClickCallback != null)
+            {
+                series1.MouseDown += (s, e) => { onClickCallback(s, e); };
+            }
+
             RecountPlotAxes(spectrum);
             PlotFrame.Series.Add(series1);
             PlotFrame.InvalidatePlot(true);
+        }
+
+        internal void MarkPeak(double x, double y)
+        {
+            if (this.Initialized)
+            {
+                ScatterSeries peakSeries = InstantinatePeakMarkSeries();
+                var existingPoint = peakSeries.Points.FirstOrDefault(p => p.X == x);
+                if (existingPoint != null)
+                {
+                    peakSeries.Points.Remove(existingPoint);
+                }
+                else
+                {
+                    peakSeries.Points.Add(new ScatterPoint(x, y));
+                }
+                PlotFrame.InvalidatePlot(true);
+            }
+        }
+
+        private ScatterSeries InstantinatePeakMarkSeries()
+        {
+            Series existingSeries = GetExistingSeries("peaks");
+            if (existingSeries != null)
+            {
+                return existingSeries as ScatterSeries;
+            }
+            else
+            {
+                var s = CreatePeakSeries();
+                this.PlotFrame.Series.Add(s);
+                return GetExistingSeries("peaks") as ScatterSeries;
+            }
+        }
+
+        private ScatterSeries CreatePeakSeries()
+        {
+            const int NumberOfAngles = 4;
+            var customMarkerOutline = new ScreenPoint[NumberOfAngles];
+            for (int i = 0; i < NumberOfAngles; i++)
+            {
+                double th = Math.PI * (2.0 * i / (NumberOfAngles - 1) - 0.5);
+                const double R = 1;
+                customMarkerOutline[i] = new ScreenPoint(Math.Cos(th) * R, Math.Sin(th) * R);
+            }
+
+            ScatterSeries s = new ScatterSeries()
+            {
+                MarkerType = MarkerType.Custom,
+                MarkerOutline = customMarkerOutline,
+                MarkerFill = OxyColors.DarkRed,
+                MarkerSize = 10,
+                TrackerKey = "peaks"
+            };
+
+            return s;
+        }
+
+        private Series GetExistingSeries(string key)
+        {
+            return this.PlotFrame.Series.FirstOrDefault(s => s.TrackerKey == key);
         }
 
         private void RecountPlotAxes(Spectrum spectrum)
@@ -132,4 +175,3 @@ namespace SpectrumAnalyzer.Helpers
         }
     }
 }
-
