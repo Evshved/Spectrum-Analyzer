@@ -14,9 +14,6 @@ namespace SpectrumAnalyzer.SpectrumsDB
 {
     public class Database
     {
-        //TODO:
-        //make names shorter
-        //add delete method
         public SQLiteConnection connection;
         private string _dbName;
 
@@ -35,7 +32,7 @@ namespace SpectrumAnalyzer.SpectrumsDB
 
         public Database()
         {
-            Name = "LOCAL.db";
+            Name = ".\\..\\..\\AppData\\LOCAL.db";
             Initialize(Name);
         }
 
@@ -48,10 +45,10 @@ namespace SpectrumAnalyzer.SpectrumsDB
         private void Initialize(string dbName)
         {
             connection = new SQLiteConnection(String.Format("Data Source={0}", dbName));
-            if (!File.Exists(String.Format("./AppData/{0}", dbName)))
-            {
-                SQLiteConnection.CreateFile(dbName);
-            }
+            //if (!File.Exists(String.Format("./AppData/{0}", dbName)))
+            //{
+            //    SQLiteConnection.CreateFile(dbName);
+            //}
         }
 
         public void OpenConnection()
@@ -70,7 +67,7 @@ namespace SpectrumAnalyzer.SpectrumsDB
             }
         }
 
-        public void put(string table, string title, string data)
+        public void Put(string table, string title, string data)
         {
             string query = String.Format("INSERT INTO {0} ('TITLE', 'DATA') VALUES (@title, @data)", table);
             SQLiteCommand command = new SQLiteCommand(query, connection);
@@ -81,7 +78,7 @@ namespace SpectrumAnalyzer.SpectrumsDB
             this.CloseConnection();
         }
 
-        public KeyValuePair<string, string> get(string table, string title)
+        public KeyValuePair<string, string> Get(string table, string title)
         {
             string query = String.Format("SELECT DATA FROM {0} WHERE TITLE=={1}", table, title);
             SQLiteCommand command = new SQLiteCommand(query, connection);
