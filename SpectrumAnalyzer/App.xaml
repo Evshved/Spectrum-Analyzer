@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:SpectrumAnalyzer"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary Source="Resources\Resources.xaml" />
     </Application.Resources>
 </Application>
+

@@ -11,9 +11,6 @@
     <Window.DataContext>
         <helpers:Plotter/>
     </Window.DataContext>
-    <Window.Resources>
-        <ResourceDictionary Source="..\Resources\Resources.xaml" />
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
