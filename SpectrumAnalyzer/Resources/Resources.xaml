@@ -1,10 +1,54 @@
 ﻿<ResourceDictionary
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!--<Path x:Key="IconTriangle2" x:Shared="False" Stretch="Uniform" Data="M50.25,133.5 L49.75,158.25 76,147.25 z" Fill="Black" Stroke="Black"/>-->
-    <Path x:Key="Icon_Plus" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 18,23L 58,23L 58,53L 18,53L 18,23 Z M 54,31L 22,31L 22,49L 54,49L 54,31 Z M 36,33L 40,33L 40,38L 45,38L 45,42L 40,42L 40,47L 36,47L 36,42L 31,42L 31,38L 36,38L 36,33 Z"/>
-    <Path x:Key="Icon_Minus" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 18,23L 58,23L 58,53L 18,53L 18,23 Z M 54,31L 22,31L 22,49L 54,49L 54,31 Z M 45,38L 45,42L 31,42L 31,38L 45,38 Z "/>
-    <Path x:Key="Icon_BorderSelectorWidth" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 57,45L 57,39.1667L 51,45L 51,40L 25,40L 25,45L 19,39.1666L 19,44.9999L 16,44.9999L 16,30.9999L 19,30.9999L 19,36.8333L 25,31L 25,36L 51,36L 51,31L 57,36.8334L 57,31L 60,31L 60,45L 57,45 Z "/>
-    <Path x:Key="Icon_RightBorder" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 57.008,21.0029L 57.008,25.0034L 32.0045,25.0034L 32.0045,21.0029L 57.008,21.0029 Z M 57.008,27.0038L 57.008,31.0042L 27.0038,31.0042L 27.0038,27.0038L 57.008,27.0038 Z M 57.008,33.0046L 57.008,37.005L 33.0046,37.005L 33.0046,33.0046L 57.008,33.0046 Z M 57.008,39.0055L 57.008,43.0059L 24.0033,43.0059L 24.0033,39.0055L 57.008,39.0055 Z M 57.008,45.0064L 57.008,49.0068L 30.0042,49.0068L 30.0042,45.0064L 57.008,45.0064 Z M 57.008,51.0073L 57.008,55.0077L 25.0035,55.0077L 25.0035,51.0073L 57.008,51.0073 Z "/>
-    <Path x:Key="Icon_LeftBorder" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 19.0027,21.0029L 19.0027,25.0034L 44.0061,25.0034L 44.0061,21.0029L 19.0027,21.0029 Z M 19.0027,27.0038L 19.0027,31.0042L 49.0068,31.0042L 49.0068,27.0038L 19.0027,27.0038 Z M 19.0027,33.0046L 19.0027,37.005L 43.006,37.005L 43.006,33.0046L 19.0027,33.0046 Z M 19.0027,39.0054L 19.0027,43.0059L 52.0073,43.0059L 52.0073,39.0054L 19.0027,39.0054 Z M 19.0027,45.0064L 19.0027,49.0068L 46.0064,49.0068L 46.0064,45.0064L 19.0027,45.0064 Z M 19.0027,51.0073L 19.0027,55.0077L 51.0071,55.0077L 51.0071,51.0073L 19.0027,51.0073 Z "/>
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:helpers="clr-namespace:SpectrumAnalyzer.Helpers">
+    <!--<Path x:Key="IconTriangle2" x:Shared="False" Stretch="Uniform" Data="M50.25,133.5 L49.75,158.25 76,147.25 z" Fill="Black" Stroke="Black" />-->
+    <Path x:Key="Icon_Plus" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 18,23L 58,23L 58,53L 18,53L 18,23 Z M 54,31L 22,31L 22,49L 54,49L 54,31 Z M 36,33L 40,33L 40,38L 45,38L 45,42L 40,42L 40,47L 36,47L 36,42L 31,42L 31,38L 36,38L 36,33 Z" />
+    <Path x:Key="Icon_Minus" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 18,23L 58,23L 58,53L 18,53L 18,23 Z M 54,31L 22,31L 22,49L 54,49L 54,31 Z M 45,38L 45,42L 31,42L 31,38L 45,38 Z " />
+    <Path x:Key="Icon_BorderSelectorWidth" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 57,45L 57,39.1667L 51,45L 51,40L 25,40L 25,45L 19,39.1666L 19,44.9999L 16,44.9999L 16,30.9999L 19,30.9999L 19,36.8333L 25,31L 25,36L 51,36L 51,31L 57,36.8334L 57,31L 60,31L 60,45L 57,45 Z " />
+    <Path x:Key="Icon_RightBorder" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 57.008,21.0029L 57.008,25.0034L 32.0045,25.0034L 32.0045,21.0029L 57.008,21.0029 Z M 57.008,27.0038L 57.008,31.0042L 27.0038,31.0042L 27.0038,27.0038L 57.008,27.0038 Z M 57.008,33.0046L 57.008,37.005L 33.0046,37.005L 33.0046,33.0046L 57.008,33.0046 Z M 57.008,39.0055L 57.008,43.0059L 24.0033,43.0059L 24.0033,39.0055L 57.008,39.0055 Z M 57.008,45.0064L 57.008,49.0068L 30.0042,49.0068L 30.0042,45.0064L 57.008,45.0064 Z M 57.008,51.0073L 57.008,55.0077L 25.0035,55.0077L 25.0035,51.0073L 57.008,51.0073 Z " />
+    <Path x:Key="Icon_LeftBorder" Fill="Black" Stretch="Uniform" Stroke="Black" StrokeLineJoin="Round" StrokeThickness="0.2" Data="M 19.0027,21.0029L 19.0027,25.0034L 44.0061,25.0034L 44.0061,21.0029L 19.0027,21.0029 Z M 19.0027,27.0038L 19.0027,31.0042L 49.0068,31.0042L 49.0068,27.0038L 19.0027,27.0038 Z M 19.0027,33.0046L 19.0027,37.005L 43.006,37.005L 43.006,33.0046L 19.0027,33.0046 Z M 19.0027,39.0054L 19.0027,43.0059L 52.0073,43.0059L 52.0073,39.0054L 19.0027,39.0054 Z M 19.0027,45.0064L 19.0027,49.0068L 46.0064,49.0068L 46.0064,45.0064L 19.0027,45.0064 Z M 19.0027,51.0073L 19.0027,55.0077L 51.0071,55.0077L 51.0071,51.0073L 19.0027,51.0073 Z " />
 
+    <Style TargetType="Button" x:Key="TextualButton">
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style BasedOn="{StaticResource TextualButton}" TargetType="Button" x:Key="HorizontalTextButton">
+        <Setter Property="Margin" Value="10,0,0,0" />
+        <Setter Property="Padding" Value="4" />
+    </Style>
+    <Style TargetType="Button" x:Key="VerticalButton">
+        <Setter Property="Margin" Value="0,10,0,0" />
+    </Style>
+    <Style TargetType="Separator" x:Key="HorizontalSeparator">
+        <Setter Property="Margin" Value="10,0,0,0"/>
+    </Style>
+    <Style TargetType="ContentControl" x:Key="VerticalIconButton">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style TargetType="Label" x:Key="WorkspaceLabel">
+        <!--Empty-->
+    </Style>
+    <Style TargetType="ListBox" x:Key="FilesListbox">
+        <Setter Property="MinWidth" Value="120"/>
+        <Setter Property="MaxWidth" Value="180"/>
+        <Setter Property="MaxHeight" Value="760"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+    </Style>
+    <Style TargetType="ListBox" x:Key="SearchListbox">
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+    </Style>
+    <Style TargetType="ListBox" x:Key="TransitionsListbox">
+        <Setter Property="MinHeight" Value="100"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+    </Style>
+    <helpers:WindowSizeConverter x:Key="WindowSizeConverter"/>
 </ResourceDictionary>

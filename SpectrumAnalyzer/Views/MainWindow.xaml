@@ -4,113 +4,82 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SpectrumAnalyzer"
         xmlns:helpers="clr-namespace:SpectrumAnalyzer.Helpers"
         mc:Ignorable="d"
-        Title="Spectrum Analyzer" Height="600" Width="800">
+        Title="Spectrum Analyzer"
+        Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.6'}" 
+        Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.5'}" >
     <Window.DataContext>
         <helpers:Plotter/>
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0">
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_File">
-                    <MenuItem Header="_New"/>
-                    <MenuItem x:Name="Menu_Open" Header="_Open" Click="Menu_Open_Click"/>
-                    <MenuItem Header="_Save"/>
-                    <Separator/>
-                    <MenuItem x:Name="Menu_Exit" Header="_Exit" Click="Menu_Exit_Click" />
-                </MenuItem>
-                <MenuItem Header="_Options">
-                    <MenuItem Header="_TODO"/>
-                </MenuItem>
-                <MenuItem Header="_About">
-                    <MenuItem Header="_Help"/>
-                    <MenuItem Header="_About creators"/>
-                    <MenuItem Header="_Contacts"/>
-                </MenuItem>
-            </Menu>
-        </DockPanel>
-        <ToolBar Grid.Row="1" VerticalAlignment="Top">
-            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Save</Button>
-            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Load</Button>
-            <Separator Margin="10,0,0,0"/>
-            <Button x:Name="Button_AddToDB" BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4" Click="Button_AddToDB_Click">Add to DB</Button>
-            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Compare to Etalon</Button>
-            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Search</Button>
-            <Separator Margin="10,0,0,0"/>
-            <Button BorderBrush="Black" BorderThickness="1" Margin="10,0,0,0" Padding="4">Detect</Button>
+        <ToolBar Grid.Row="0" VerticalAlignment="Top">
+            <Button Style="{StaticResource HorizontalTextButton}" Click="Menu_Open_Click" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}"/>
+            <Separator Style="{StaticResource HorizontalSeparator}" />
+            <Button x:Name="Button_AddToDB" Style="{StaticResource HorizontalTextButton}" Click="Button_AddToDB_Click" Content="{StaticResource str_btn_DatabaseAdd}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}"/>
+            <Separator Style="{StaticResource HorizontalSeparator}" />
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}"/>
         </ToolBar>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0">
-                    Files
-                </Label>
-                <ListBox x:Name="ListBox_Files_Queue" Grid.Row="1" MinWidth="120" MaxWidth="180" MaxHeight="760" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SelectionChanged="ListBox_Files_Queue_SelectionChanged">
-                </ListBox>
+                <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Files}"/>
+                <ListBox Style="{StaticResource FilesListbox}" x:Name="ListBox_Files_Queue" Grid.Row="1" SelectionChanged="ListBox_Files_Queue_SelectionChanged"/>
             </Grid>
-
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <oxy:PlotView x:Name="PlotBox" Model="{Binding PlotFrame}" Grid.Row="0"/>
+
+                <oxy:PlotView x:Name="PlotBox" Model="{Binding PlotFrame}" Grid.Row="0" />
                 <ToolBar Grid.Row="1">
-                    <Button x:Name="Button_SaveImage" Padding="4" Margin="10,0,0,0" BorderThickness="1" BorderBrush="Black" Click="Button_SaveImage_Click">
-                        Save as PNG
-                    </Button>
+                    <Button x:Name="Button_SaveImage" Style="{StaticResource HorizontalTextButton}" Click="Button_SaveImage_Click" Content="{StaticResource str_btn_SavePNG}" />
                 </ToolBar>
             </Grid>
-
             <ToolBarTray Orientation="Vertical" Grid.Column="2">
                 <ToolBar MaxWidth="30">
-                    <Button Margin="0,10,0,0">
-                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_BorderSelectorWidth}"/>
+                    <Button Style="{StaticResource VerticalButton}">
+                        <ContentControl Style="{StaticResource VerticalIconButton}" Content="{StaticResource Icon_BorderSelectorWidth}" />
                     </Button>
-                    <Button Margin="0,10,0,0">
-                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_LeftBorder}"/>
+                    <Button Style="{StaticResource VerticalButton}">
+                        <ContentControl Style="{StaticResource VerticalIconButton}" Content="{StaticResource Icon_LeftBorder}" />
                     </Button>
-                    <Button Margin="0,10,0,0">
-                        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Content="{StaticResource Icon_RightBorder}"/>
+                    <Button Style="{StaticResource VerticalButton}">
+                        <ContentControl Style="{StaticResource VerticalIconButton}" Content="{StaticResource Icon_RightBorder}" />
                     </Button>
-                    <Button></Button>
                 </ToolBar>
             </ToolBarTray>
             <Grid Grid.Column="3">
                 <Grid MinWidth="120" MaxWidth="180" MaxHeight="760">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Label Grid.Row="0">
-                        Search results
-                    </Label>
-                    <ListBox x:Name="ListBox_Results" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
-                    </ListBox>
-                    <Label Grid.Row="2">
-                        Transitions
-                    </Label>
-                    <ListBox x:Name="ListBox_Transitions" Grid.Row="3" MinHeight="100" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
-                    </ListBox>
+                    
+                    <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Search}"/>
+                    <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1" x:Name="ListBox_Results" />
+                    <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="2" Content="{StaticResource str_lbl_Transitions}"/>
+                    <ListBox Style="{StaticResource TransitionsListbox}" Grid.Row="3" x:Name="ListBox_Transitions" />
                 </Grid>
             </Grid>
         </Grid>

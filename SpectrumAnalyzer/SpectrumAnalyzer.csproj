@@ -99,14 +99,19 @@
     <Compile Include="Helpers\IO.cs" />
     <Compile Include="Helpers\ObservableDictionary.cs" />
     <Compile Include="Helpers\SpectrumProfile.cs" />
+    <Compile Include="Helpers\WindowSizeConverter.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Helpers\Spectrum.cs" />
     <Compile Include="Helpers\ListBoxFileItem.cs" />
     <Compile Include="Helpers\Plotter.cs" />
-    <None Include="AppData\LOCAL.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Content Include="AppData\LOCAL.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Model\ChartViewModel.cs" />
+    <Page Include="Resources\Localization_en.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
