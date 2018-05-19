@@ -42,7 +42,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Files}"/>
-                <ListBox Style="{StaticResource FilesListbox}" ItemsSource="{Binding Files}" x:Name="Files" Grid.Row="1"/>
+                <ListBox Style="{StaticResource FilesListbox}" ItemsSource="{Binding Files}" Grid.Row="1" SelectionChanged="ListBox_SelectionChanged"/>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -80,7 +80,21 @@
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Search}"/>
                     <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1" />
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="2" Content="{StaticResource str_lbl_Transitions}"/>
-                    <ListView ItemsSource="{Binding Transitions}" Style="{StaticResource TransitionsListView}" Grid.Row="3"/>
+                    <ListView ItemsSource="{Binding Transitions}" Style="{StaticResource TransitionsListView}" Grid.Row="3">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Border Background="Transparent" Margin="{TemplateBinding Padding}">
+                                                <CheckBox IsChecked="{Binding IsVisible}" Content="{Binding Name}" VerticalContentAlignment="Center" Click="CheckBox_Click" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
                 </Grid>
             </Grid>
         </Grid>

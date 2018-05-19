@@ -47,21 +47,6 @@
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
-        <Setter Property="ItemContainerStyle">
-            <Setter.Value>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate>
-                                <Border Background="Transparent" Margin="{TemplateBinding Padding}">
-                                    <CheckBox IsChecked="{Binding IsVisible}" Content="{Binding Name}" VerticalContentAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </Setter.Value>
-        </Setter>
     </Style>
     <helpers:WindowSizeConverter x:Key="WindowSizeConverter"/>
 </ResourceDictionary>

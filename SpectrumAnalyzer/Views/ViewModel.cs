@@ -6,6 +6,7 @@ using SpectrumAnalyzer.Models;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
@@ -26,6 +27,27 @@ namespace SpectrumAnalyzer.ViewModels
         {
             _filesAdded(sender);
         }
+        public void TransitionCheckBoxChanged(object sender, RoutedEventArgs args)
+        {
+            CheckBox checkBox = sender as CheckBox;
+            var transitionName = checkBox.Content.ToString();
+            if (checkBox.IsChecked == true)
+            {
+                var existingSeries = Plotter.GetExistingSeries(transitionName.ToLower());
+                if (existingSeries == null)
+                {
+                    Plotter.Plot(Transitions.First(t => t.Name == transitionName), Plotter.PlotMethod.Combine, null);
+                }
+            }
+            else if (checkBox.IsChecked == false)
+            {
+                var existingSeries = Plotter.GetExistingSeries(transitionName.ToLower());
+                if (existingSeries != null)
+                {
+                    Plotter.RemoveSeries(transitionName);
+                }
+            }
+        }
         #endregion
 
         public ViewModel()
@@ -36,7 +58,7 @@ namespace SpectrumAnalyzer.ViewModels
             Files = new ObservableCollection<ListBoxFileItem>();
             AddFilesCommand = new RelayCommand(AddFiles);
             SaveImageCommand = new RelayCommand(SaveImage);
-            AddToDatabaseCommand = new RelayCommand(AddToDB);   
+            AddToDatabaseCommand = new RelayCommand(AddToDB);
         }
         private void AddFiles(object parameter)
         {
@@ -96,7 +118,8 @@ namespace SpectrumAnalyzer.ViewModels
 
             if (!string.IsNullOrEmpty(contents))
             {
-                var originalSpectrum = new Spectrum(contents, selectedFile.Name);
+                var originalSpectrum = new Spectrum(contents, "Original");
+                originalSpectrum.FileName = selectedFile.Name;
                 Transitions.Add(originalSpectrum);
                 Transitions.Add(originalSpectrum.GetQuantized());
                 Transitions.Add(originalSpectrum.GetSearched());

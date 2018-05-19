@@ -4,7 +4,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
-namespace SpectrumAnalyzer.Helpers
+namespace SpectrumAnalyzer.Models
 {
     public class Plotter
     {
@@ -22,7 +22,7 @@ namespace SpectrumAnalyzer.Helpers
                 }
             }
         }
-
+        private Random rnd = new Random();
         public PlotModel PlotFrame { get; private set; }
 
         public enum PlotMethod
@@ -60,7 +60,7 @@ namespace SpectrumAnalyzer.Helpers
 
             // TODO: Spectrum checkouts
 
-            PlotFrame.Title = spectrum.SpectrumName;
+            PlotFrame.Title = spectrum.FileName;
 
             var series1 = new LineSeries
             {
@@ -69,7 +69,7 @@ namespace SpectrumAnalyzer.Helpers
             };
             if (plotMethod == PlotMethod.Combine)
             {
-                series1.Color = OxyColors.Blue;
+                series1.Color = OxyColor.FromRgb(Convert.ToByte(rnd.Next(1, 200)), Convert.ToByte(rnd.Next(1, 200)), Convert.ToByte(rnd.Next(1, 200)));
             }
             for (int i = 0; i < spectrum.Bins.Count; i++)
             {
@@ -80,9 +80,21 @@ namespace SpectrumAnalyzer.Helpers
             {
                 series1.MouseDown += (s, e) => { onClickCallback(s, e); };
             }
+            series1.TrackerKey = spectrum.Name.ToLower();
+            series1.Title = spectrum.Name;
 
             RecountPlotAxes(spectrum);
             PlotFrame.Series.Add(series1);
+            PlotFrame.InvalidatePlot(true);
+        }
+
+        public void RemoveSeries(string key)
+        {
+            var existingSeries = this.PlotFrame.Series.FirstOrDefault(s => s.TrackerKey == key.ToLower());
+            if (!string.IsNullOrEmpty(key) && existingSeries != null)
+            {
+                PlotFrame.Series.Remove(existingSeries);
+            }
             PlotFrame.InvalidatePlot(true);
         }
 
@@ -142,7 +154,7 @@ namespace SpectrumAnalyzer.Helpers
             return s;
         }
 
-        private Series GetExistingSeries(string key)
+        public Series GetExistingSeries(string key)
         {
             return this.PlotFrame.Series.FirstOrDefault(s => s.TrackerKey == key);
         }

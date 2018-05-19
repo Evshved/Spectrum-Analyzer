@@ -11,6 +11,8 @@ namespace SpectrumAnalyzer.Models
         private string[] _contents;
         private bool _isVisible;
         public string Name { get; set; }
+        private string _fileName;
+        public string FileName { get { return _fileName.Split('.')[0]; } set { _fileName = value; } }
         public bool IsVisible { get { return _isVisible; } set { _isVisible = value; OnPropertyChanged("IsVisible"); } }
         public List<Bin> Bins;
 
@@ -96,7 +98,7 @@ namespace SpectrumAnalyzer.Models
                     curX = previous.X + increment;
                 }
             }
-            return new Spectrum(result, "Quantized");
+            return new Spectrum(result, "Quantized") { FileName = this.FileName };
         }
 
         public List<Bin> GetSmoothed()
@@ -145,7 +147,7 @@ namespace SpectrumAnalyzer.Models
             {
                 resultDataYList.Add(new Bin(this.Bins[i].X, (float)resultDataY[i]));
             }
-            return new Spectrum(resultDataYList, "Searched");
+            return new Spectrum(resultDataYList, "Searched") { FileName = this.FileName };
         }
 
         private float CalculateIncrement()

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using SpectrumAnalyzer.ViewModels;
+using System.Windows.Controls;
 
 namespace SpectrumAnalyzer.Views
 {
@@ -11,7 +12,16 @@ namespace SpectrumAnalyzer.Views
         {
             InitializeComponent();
             _dataContext = DataContext as ViewModel;
-            Files.SelectionChanged += _dataContext.FilesAdded;
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            _dataContext.TransitionCheckBoxChanged(sender, e);
+        }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _dataContext.FilesAdded(sender, e);
         }
     }
 }
