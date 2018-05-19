@@ -161,7 +161,9 @@ namespace SpectrumAnalyzer.Helpers
                 AbsoluteMinimum = minX,
                 AbsoluteMaximum = maxX,
                 Minimum = minX,
-                Maximum = maxX
+                Maximum = maxX,
+                Title = "Δν, cm⁻¹",
+                AxisTitleDistance = 10
             });
             PlotFrame.Axes.Add(new LinearAxis
             {
@@ -169,7 +171,9 @@ namespace SpectrumAnalyzer.Helpers
                 AbsoluteMinimum = minY,
                 AbsoluteMaximum = maxY,
                 Minimum = minY,
-                Maximum = maxY
+                Maximum = maxY,
+                Title = "Интенсивность, о.е.",
+                AxisTitleDistance = 10
             });
         }
     }
