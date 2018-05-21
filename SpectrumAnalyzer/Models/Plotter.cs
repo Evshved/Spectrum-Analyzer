@@ -3,6 +3,7 @@ using System.Linq;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using System.Collections.Generic;
 
 namespace SpectrumAnalyzer.Models
 {
@@ -34,6 +35,7 @@ namespace SpectrumAnalyzer.Models
         {
             if (this.Initialized)
             {
+                PlotFrame.Title = string.Empty;
                 PlotFrame.Series.Clear();
             }
         }
@@ -45,11 +47,11 @@ namespace SpectrumAnalyzer.Models
             PlotFrame.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Maximum = 10, Minimum = 0 });
         }
 
-        public void Plot(Spectrum spectrum, PlotMethod plotMethod, Action<object, OxyMouseDownEventArgs> onClickCallback)
+        public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onClickCallback)
         {
-            if (plotMethod == PlotMethod.Replace)
+            if (spectrum == null)
             {
-                this.Clear();
+                return;
             }
 
             // TODO: Spectrum checkouts
@@ -59,27 +61,34 @@ namespace SpectrumAnalyzer.Models
             var series1 = new LineSeries
             {
                 StrokeThickness = 1,
-                Color = OxyColors.Red
+                Color = this.GetColor(),
+                TrackerKey = spectrum.Name.ToLower(),
+                Title = spectrum.Name
             };
-            if (plotMethod == PlotMethod.Combine)
-            {
-                series1.Color = OxyColor.FromRgb(Convert.ToByte(rnd.Next(1, 200)), Convert.ToByte(rnd.Next(1, 200)), Convert.ToByte(rnd.Next(1, 200)));
-            }
-            for (int i = 0; i < spectrum.Bins.Count; i++)
-            {
-                series1.Points.Add(new DataPoint(spectrum.Bins[i].X, spectrum.Bins[i].Y));
-            }
+
+            series1.Points.AddRange(spectrum.Bins.Select(x => (DataPoint)x));
 
             if (onClickCallback != null)
             {
                 series1.MouseDown += (s, e) => { onClickCallback(s, e); };
             }
-            series1.TrackerKey = spectrum.Name.ToLower();
-            series1.Title = spectrum.Name;
 
-            RecountPlotAxes(spectrum);
             PlotFrame.Series.Add(series1);
+            RecountPlotAxes(spectrum);
             PlotFrame.InvalidatePlot(true);
+        }
+
+        private OxyColor GetColor()
+        {
+            var colors = new List<OxyColor> {
+                OxyColors.Red,
+                OxyColors.DarkBlue,
+                OxyColors.DarkGreen,
+                OxyColors.Orange,
+                OxyColors.DarkGray
+            };
+
+            return colors[this.PlotFrame.Series.Count(serie => serie.TrackerKey != "peaks")];
         }
 
         public void RemoveSeries(string key)
@@ -155,10 +164,27 @@ namespace SpectrumAnalyzer.Models
 
         private void RecountPlotAxes(Spectrum spectrum)
         {
-            var minX = spectrum.Bins.Min(x => x.X);
-            var maxX = spectrum.Bins.Max(x => x.X);
-            var minY = spectrum.Bins.Min(x => x.Y);
-            var maxY = spectrum.Bins.Max(x => x.Y);
+            double minX = spectrum.Bins.Min(x => x.X);
+            double maxX = spectrum.Bins.Max(x => x.X);
+            double minY = spectrum.Bins.Min(x => x.Y);
+            double maxY = spectrum.Bins.Max(x => x.Y);
+
+            for (int i = 0; i < PlotFrame.Series.Count; i++)
+            {
+                var serie = this.PlotFrame.Series[i] as LineSeries;
+                var _minX = serie.Points.Min(x => x.X);
+                var _maxX = serie.Points.Max(x => x.X);
+                var _minY = serie.Points.Min(x => x.Y);
+                var _maxY = serie.Points.Max(x => x.Y);
+                if (_minX < minX)
+                    minX = _minX;
+                if (_maxX > maxX)
+                    maxX = _maxX;
+                if (_minY < minY)
+                    minY = _minY;
+                if (_maxY > maxY)
+                    maxY = _maxY;
+            }
 
             PlotFrame.Axes.Clear();
             PlotFrame.Axes.Add(new LinearAxis
@@ -175,9 +201,9 @@ namespace SpectrumAnalyzer.Models
             {
                 Position = AxisPosition.Left,
                 AbsoluteMinimum = minY,
-                AbsoluteMaximum = maxY,
+                AbsoluteMaximum = maxY * 1.25,
                 Minimum = minY,
-                Maximum = maxY,
+                Maximum = maxY * 1.25,
                 Title = "Интенсивность, о.е.",
                 AxisTitleDistance = 10
             });
