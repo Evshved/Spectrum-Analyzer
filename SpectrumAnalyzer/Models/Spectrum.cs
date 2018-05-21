@@ -15,6 +15,8 @@ namespace SpectrumAnalyzer.Models
         public string FileName { get { return _fileName.Split('.')[0]; } set { _fileName = value; } }
         public bool IsVisible { get { return _isVisible; } set { _isVisible = value; OnPropertyChanged("IsVisible"); } }
         public List<Bin> Bins;
+        public List<Bin> PeakX;
+        public readonly float LeftBound = 250;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -37,7 +39,11 @@ namespace SpectrumAnalyzer.Models
                     {
                         continue;
                     }
-                    Bins.Add(ParseBin(str));
+                    var bin = ParseBin(str);
+                    if (bin.X > LeftBound)
+                    {
+                        Bins.Add(bin);
+                    }
                 }
             }
             Name = fileName;
@@ -147,7 +153,19 @@ namespace SpectrumAnalyzer.Models
             {
                 resultDataYList.Add(new Bin(this.Bins[i].X, (float)resultDataY[i]));
             }
-            return new Spectrum(resultDataYList, "Searched") { FileName = this.FileName };
+
+            PeakX = new List<Bin>();
+            for (int i = 0; i < peakX.Length; i++)
+            {
+                if (i == 0)
+                {
+                    continue;
+                }
+                var nearest = Bins.Aggregate((current, next) => Math.Abs((long)current.X - peakX[i]) < Math.Abs((long)next.X - peakX[i]) ? current : next);
+                PeakX.Add(new Bin((float)peakX[i], nearest.Y));
+            }
+
+            return new Spectrum(resultDataYList, "Searched") { FileName = this.FileName, PeakX = this.PeakX };
         }
 
         private float CalculateIncrement()
