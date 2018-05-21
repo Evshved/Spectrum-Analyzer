@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using OxyPlot;
+using System.Globalization;
 
 namespace SpectrumAnalyzer.Helpers
 {
@@ -19,6 +20,11 @@ namespace SpectrumAnalyzer.Helpers
         public override string ToString()
         {
             return $"X: {this.X}, Y: {this.Y}";
+        }
+
+        public static implicit operator DataPoint(Bin bin)
+        {
+            return new DataPoint(bin.X, bin.Y);
         }
     }
 }
