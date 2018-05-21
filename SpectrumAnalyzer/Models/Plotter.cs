@@ -25,12 +25,6 @@ namespace SpectrumAnalyzer.Models
         private Random rnd = new Random();
         public PlotModel PlotFrame { get; private set; }
 
-        public enum PlotMethod
-        {
-            Replace = 1,
-            Combine = 2
-        }
-
         public Plotter()
         {
             Initialize();

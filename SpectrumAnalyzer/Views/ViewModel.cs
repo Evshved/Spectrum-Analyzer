@@ -23,9 +23,9 @@ namespace SpectrumAnalyzer.ViewModels
         public RelayCommand AddToDatabaseCommand { get; set; }
 
         #region EventsProcessing
-        public void FilesAdded(object sender, SelectionChangedEventArgs args)
+        public void FileSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            _filesAdded(sender);
+            _fileSelectionChanged(sender);
         }
         public void TransitionCheckBoxChanged(object sender, RoutedEventArgs args)
         {
@@ -36,7 +36,7 @@ namespace SpectrumAnalyzer.ViewModels
                 var existingSeries = Plotter.GetExistingSeries(transitionName.ToLower());
                 if (existingSeries == null)
                 {
-                    Plotter.Plot(Transitions.First(t => t.Name == transitionName), Plotter.PlotMethod.Combine, null);
+                    Plotter.Plot(Transitions.First(t => t.Name == transitionName), null);
                 }
             }
             else if (checkBox.IsChecked == false)
@@ -109,9 +109,10 @@ namespace SpectrumAnalyzer.ViewModels
             }
         }
 
-        private void _filesAdded(object sender)
+        private void _fileSelectionChanged(object sender)
         {
             Transitions.Clear();
+            Plotter.Clear();
 
             ListBoxFileItem selectedFile = (ListBoxFileItem)((ListBox)sender).SelectedItem;
             string contents = ReadFromFile(selectedFile.Path);
@@ -120,12 +121,17 @@ namespace SpectrumAnalyzer.ViewModels
             {
                 var originalSpectrum = new Spectrum(contents, "Original");
                 originalSpectrum.FileName = selectedFile.Name;
+                Plotter.Plot(originalSpectrum, null);
                 Transitions.Add(originalSpectrum);
-                Transitions.Add(originalSpectrum.GetQuantized());
-                Transitions.Add(originalSpectrum.GetSearched());
-
-                Plotter.Plot(originalSpectrum, Plotter.PlotMethod.Replace, null);
-                Plotter.Plot(Transitions.Last(), Plotter.PlotMethod.Replace, MarkPeakCallback);
+                // var quantized = originalSpectrum.GetQuantized();
+                // Transitions.Add(quantized);
+                var searched = originalSpectrum.GetSearched();
+                Transitions.Add(searched);
+                Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), MarkPeakCallback);
+                //foreach (var item in searched.PeakX)
+                //{
+                //    Plotter.MarkPeak(item.X, item.Y);
+                //}
             }
         }
 
@@ -157,7 +163,7 @@ namespace SpectrumAnalyzer.ViewModels
             {
                 data += string.Format("({0};{1})", point.X, point.Y);
             }
-            database.Put("Spectrums", title, data);
+           //  database.Put("Spectrums", title, data); // Из за этой строчки у меня не компилируется !!!!
         }
     }
 }

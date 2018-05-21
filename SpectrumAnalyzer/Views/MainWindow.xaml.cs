@@ -21,7 +21,7 @@ namespace SpectrumAnalyzer.Views
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _dataContext.FilesAdded(sender, e);
+            _dataContext.FileSelectionChanged(sender, e);
         }
     }
 }
