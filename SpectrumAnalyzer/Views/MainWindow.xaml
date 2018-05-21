@@ -78,7 +78,18 @@
                     </Grid.RowDefinitions>
 
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Search}"/>
-                    <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1" />
+                    <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1">
+                        <TextBlock>91% - Calcite</TextBlock>
+                        <TextBlock>87% - Siderite</TextBlock>
+                        <TextBlock>87% - Rhodochrosite</TextBlock>
+                        <TextBlock>85% - Gregoryite</TextBlock>
+                        <TextBlock>81% - Aragonite</TextBlock>
+                        <TextBlock>69% - Witherite</TextBlock>
+                        <TextBlock>66% - Witherite (Synthetic)</TextBlock>
+                        <TextBlock>60% - Strontianite</TextBlock>
+                        <TextBlock>34% - Cerussite</TextBlock>
+                        <TextBlock>30% - Natrite</TextBlock>
+                    </ListBox>
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="2" Content="{StaticResource str_lbl_Transitions}"/>
                     <ListView ItemsSource="{Binding Transitions}" Style="{StaticResource TransitionsListView}" Grid.Row="3">
                         <ListView.ItemContainerStyle>
