@@ -74,7 +74,10 @@ namespace SpectrumAnalyzer.Views
                 profile.Transitions.Add("quantize", spectrum.GetQuantized());
 
                 ((Plotter)DataContext).Plot(profile.OriginalData, PlotMethod.Replace);
-                ((Plotter)DataContext).Plot(profile.Transitions["quantize"], PlotMethod.Combine);
+                // ((Plotter)DataContext).Plot(profile.Transitions["quantize"], PlotMethod.Combine);
+
+                profile.SearchHH();
+                ((Plotter)DataContext).Plot(profile.Transitions["searchHH"], PlotMethod.Combine);
             }
         }
 

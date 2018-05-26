@@ -63,7 +63,7 @@ namespace SpectrumAnalyzer.Helpers
         {
             QuantizedSpectrum = new List<Bin>();
             var increment = CalculateIncrement() * Settings.Precision;
-            
+
             QuantizedSpectrum.Add(Bins[0]);
 
             foreach (var bin in Bins.Skip(1))
@@ -114,6 +114,26 @@ namespace SpectrumAnalyzer.Helpers
                 }
                 File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\quantized_spectrum.csv", result);
             }
+        }
+
+        internal float[] ToXArray()
+        {
+            List<float> result = new List<float>();
+            for (int i = 0; i < Bins.Count; i++)
+            {
+                result.Add(Bins[i].X);
+            }
+            return result.ToArray();
+        }
+
+        internal float[] ToYArray()
+        {
+            List<float> result = new List<float>();
+            for (int i = 0; i < Bins.Count; i++)
+            {
+                result.Add(Bins[i].Y);
+            }
+            return result.ToArray();
         }
     }
 }
