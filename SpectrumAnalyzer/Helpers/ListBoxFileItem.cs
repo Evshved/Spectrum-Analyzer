@@ -1,13 +1,21 @@
 ﻿namespace SpectrumAnalyzer.Helpers
 {
-    class ListBoxFileItem
+    public class ListBoxFileItem
     {
-        public string fileName;
-        public string filePath;
+        public string Name { get; set; }
+
+        public string Path { get; set; }
+
+        public ListBoxFileItem(string fileName, string filePath)
+        {
+            Name = fileName;
+            Path = filePath;
+        }
 
         public override string ToString()
         {
-            return fileName;
+            return Name;
         }
     }
 }
+

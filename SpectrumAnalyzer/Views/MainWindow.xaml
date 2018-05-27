@@ -4,14 +4,15 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:helpers="clr-namespace:SpectrumAnalyzer.Helpers"
+        xmlns:viewmodels="clr-namespace:SpectrumAnalyzer.ViewModels"
         mc:Ignorable="d"
         Title="Spectrum Analyzer"
         Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.6'}" 
-        Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.5'}" >
-    <Window.DataContext>
-        <helpers:Plotter/>
-    </Window.DataContext>
+        Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.5'}" 
+        DataContext="{DynamicResource ViewModel}">
+    <Window.Resources>
+        <viewmodels:ViewModel x:Key="ViewModel"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -19,10 +20,10 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" VerticalAlignment="Top">
-            <Button Style="{StaticResource HorizontalTextButton}" Click="Menu_Open_Click" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Command="{Binding AddFilesCommand}" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}"/>
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}"/>
             <Separator Style="{StaticResource HorizontalSeparator}" />
-            <Button x:Name="Button_AddToDB" Style="{StaticResource HorizontalTextButton}" Click="Button_AddToDB_Click" Content="{StaticResource str_btn_DatabaseAdd}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Command="{Binding AddToDatabaseCommand}" Content="{StaticResource str_btn_DatabaseAdd}"/>
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}"/>
             <Separator Style="{StaticResource HorizontalSeparator}" />
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}"/>
@@ -41,7 +42,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Files}"/>
-                <ListBox Style="{StaticResource FilesListbox}" x:Name="ListBox_Files_Queue" Grid.Row="1" SelectionChanged="ListBox_Files_Queue_SelectionChanged"/>
+                <ListBox Style="{StaticResource FilesListbox}" ItemsSource="{Binding Files}" x:Name="Files" Grid.Row="1"/>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -49,9 +50,9 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <oxy:PlotView x:Name="PlotBox" Model="{Binding PlotFrame}" Grid.Row="0" />
+                <oxy:PlotView Model="{Binding Plotter.PlotFrame}" Grid.Row="0" />
                 <ToolBar Grid.Row="1">
-                    <Button x:Name="Button_SaveImage" Style="{StaticResource HorizontalTextButton}" Click="Button_SaveImage_Click" Content="{StaticResource str_btn_SavePNG}" />
+                    <Button Style="{StaticResource HorizontalTextButton}" Command="{Binding SaveImageCommand}" Content="{StaticResource str_btn_SavePNG}" />
                 </ToolBar>
             </Grid>
             <ToolBarTray Orientation="Vertical" Grid.Column="2">
@@ -75,11 +76,11 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    
+
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Search}"/>
-                    <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1" x:Name="ListBox_Results" />
+                    <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1" />
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="2" Content="{StaticResource str_lbl_Transitions}"/>
-                    <ListBox Style="{StaticResource TransitionsListbox}" Grid.Row="3" x:Name="ListBox_Transitions" />
+                    <ListView ItemsSource="{Binding Transitions}" Style="{StaticResource TransitionsListView}" Grid.Row="3"/>
                 </Grid>
             </Grid>
         </Grid>

@@ -1,5 +1,6 @@
 ﻿using OxyPlot;
 using OxyPlot.Wpf;
+using SpectrumAnalyzer.Models;
 using System.Threading;
 using System.Windows.Threading;
 
