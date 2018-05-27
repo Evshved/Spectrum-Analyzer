@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SpectrumAnalyzer.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -9,54 +12,78 @@ using System.Threading.Tasks;
 
 namespace SpectrumAnalyzer.SpectrumsDB
 {
-    public class Spectrum : INotifyPropertyChanged
+    //TODO:
+    //0. check sql expressions;
+    //1. add overloads;
+    public class Database
     {
-        private int id;
-        private string title;
-        private string data;
+        public SQLiteConnection connection;
+        private string dbName;
 
-        public int ID
+        public string Name
         {
-            get { return id; }
-            set
+            get
             {
-                id = value;
-                OnPropertyChanged("id");
+                return dbName;
             }
         }
 
-        public string TITLE
+        public Database()
         {
-            get { return title; }
-            set
-            {
-                title = value;
-                OnPropertyChanged("title");
-            }
+            dbName = "LOCAL.db";
+            Initialize(dbName);
         }
-        public string DATA
+
+        public Database(string databaseName)
         {
-            get { return data; }
-            set
+            dbName = databaseName;
+            Initialize(dbName);
+        }
+
+        private void Initialize(string dbName)
+        {
+            connection = new SQLiteConnection(String.Format("Data Source={0}", dbName));
+            if (!File.Exists(String.Format("./AppData/{0}", dbName)))
             {
-                data = value;
-                OnPropertyChanged("Data");
+                SQLiteConnection.CreateFile(dbName);
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string prop = "")
+        public void OpenConnection()
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            if (connection.State != System.Data.ConnectionState.Open)
+            {
+                connection.Open();
+            }
         }
-    }
 
-    public class ApplicationContext : DbContext
-    {
-        public ApplicationContext() : base("DefaultConnection")
+        public void CloseConnection()
         {
+            if (connection.State != System.Data.ConnectionState.Closed)
+            {
+                connection.Close();
+            }
         }
-        public DbSet<Spectrum> Spectrums { get; set; }
+
+        public void LoadDataToDB(string table, string title, string data)
+        {
+            string query = String.Format("INSERT INTO {0} ('TITLE', 'DATA') VALUES (@title, @data)", table);
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            this.OpenConnection();
+            command.Parameters.AddWithValue("@title", title);
+            command.Parameters.AddWithValue("@data", data);
+            command.ExecuteNonQuery();
+            this.CloseConnection();
+        }
+
+        public KeyValuePair<string, string> UploadDataFromDB(string table, string title)
+        {
+            string query = String.Format("SELECT DATA FROM {0} WHERE TITLE == {1}", table, title);
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            this.OpenConnection();
+            SQLiteDataReader result = command.ExecuteReader();
+            this.CloseConnection();
+            return new KeyValuePair<string, string>(result["DATA"].ToString(), title);
+        }
     }
 }
