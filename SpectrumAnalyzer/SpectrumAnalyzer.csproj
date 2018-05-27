@@ -99,24 +99,8 @@
     <Compile Include="Helpers\IO.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Helpers\WindowSizeConverter.cs" />
-    <Compile Include="Models\LocalDBModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LocalDBModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\LocalDBModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LocalDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\LocalDBModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LocalDBModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Spectrums.cs">
-      <DependentUpon>LocalDBModel.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\LocalDbConnection.cs" />
+    <Compile Include="Models\Spectrums.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Models\Spectrum.cs" />
     <Compile Include="Helpers\ListBoxFileItem.cs" />
@@ -124,16 +108,6 @@
     <Compile Include="ViewModels\ViewModel.cs" />
     <Content Include="AppData\LOCAL.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Models\LocalDBModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>LocalDBModel.edmx</DependentUpon>
-      <LastGenOutput>LocalDBModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\LocalDBModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>LocalDBModel.edmx</DependentUpon>
-      <LastGenOutput>LocalDBModel.cs</LastGenOutput>
     </Content>
     <None Include="Models\ChartView.cs" />
     <Page Include="Resources\Localization_en.xaml">
@@ -178,13 +152,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="Models\LocalDBModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>LocalDBModel.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Models\LocalDBModel.edmx.diagram">
-      <DependentUpon>LocalDBModel.edmx</DependentUpon>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
