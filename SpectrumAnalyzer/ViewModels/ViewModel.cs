@@ -127,15 +127,15 @@ namespace SpectrumAnalyzer.ViewModels
                 // Transitions.Add(quantized);
                 var searched = originalSpectrum.GetSearched();
                 Transitions.Add(searched);
-                Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), MarkPeakCallback);
-                //foreach (var item in searched.PeakX)
-                //{
-                //    Plotter.MarkPeak(item.X, item.Y);
-                //}
+                Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked);
+                foreach (var item in searched.PeakX)
+                {
+                    Plotter.MarkPeak(item.X, item.Y);
+                }
             }
         }
 
-        private void MarkPeakCallback(object s, OxyMouseDownEventArgs e)
+        private void OnSeriesClicked(object s, OxyMouseDownEventArgs e)
         {
             var series = s as LineSeries;
             var x = series.InverseTransform(e.Position).X;

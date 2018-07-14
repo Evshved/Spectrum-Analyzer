@@ -47,7 +47,7 @@ namespace SpectrumAnalyzer.Models
             PlotFrame.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Maximum = 10, Minimum = 0 });
         }
 
-        public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onClickCallback)
+        public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onSeriesClicked)
         {
             if (spectrum == null)
             {
@@ -68,9 +68,9 @@ namespace SpectrumAnalyzer.Models
 
             series1.Points.AddRange(spectrum.Bins.Select(x => (DataPoint)x));
 
-            if (onClickCallback != null)
+            if (onSeriesClicked != null)
             {
-                series1.MouseDown += (s, e) => { onClickCallback(s, e); };
+                series1.MouseDown += (s, e) => { onSeriesClicked(s, e); };
             }
 
             PlotFrame.Series.Add(series1);
