@@ -3,6 +3,7 @@ using OxyPlot;
 using OxyPlot.Series;
 using SpectrumAnalyzer.Helpers;
 using SpectrumAnalyzer.Models;
+using SpectrumAnalyzer.Views;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace SpectrumAnalyzer.ViewModels
         public RelayCommand AddFilesCommand { get; set; }
         public RelayCommand SaveImageCommand { get; set; }
         public RelayCommand AddToDatabaseCommand { get; set; }
+        public RelayCommand OpenDatabaseCommand { get; set; }
 
         #region EventsProcessing
         public void FileSelectionChanged(object sender, SelectionChangedEventArgs args)
@@ -59,7 +61,9 @@ namespace SpectrumAnalyzer.ViewModels
             AddFilesCommand = new RelayCommand(AddFiles);
             SaveImageCommand = new RelayCommand(SaveImage);
             AddToDatabaseCommand = new RelayCommand(AddToDB);
+            OpenDatabaseCommand = new RelayCommand(OpenDatabaseView);
         }
+
         private void AddFiles(object parameter)
         {
             OpenFileDialog dialog = new OpenFileDialog
@@ -155,7 +159,6 @@ namespace SpectrumAnalyzer.ViewModels
 
         private void AddToDB(object parameter)
         {
-            var database = new DBConnection();
             var title = Plotter.PlotFrame.Title;
             var series = Plotter.PlotFrame.Series[0] as LineSeries;
             string data = string.Empty;
@@ -163,7 +166,13 @@ namespace SpectrumAnalyzer.ViewModels
             {
                 data += string.Format("({0};{1})", point.X, point.Y);
             }
-           //  database.Put("Spectrums", title, data); // Из за этой строчки у меня не компилируется !!!!
+            Database.Put(new Spectrums() { PEAKS = data, TITLE = title });
+        }
+
+        private void OpenDatabaseView(object parameter)
+        {
+            DatabaseWindow window = new DatabaseWindow();
+            window.Show();
         }
     }
 }

@@ -27,6 +27,8 @@
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}"/>
             <Separator Style="{StaticResource HorizontalSeparator}" />
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}"/>
+            <Separator Style="{StaticResource HorizontalSeparator}" />
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_OpenDatabase}" Command="{Binding OpenDatabaseCommand}"/>
         </ToolBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

@@ -11,5 +11,6 @@
     <system:String x:Key="str_btn_DatabaseAdd">Add to DB</system:String>
     <system:String x:Key="str_btn_Search">Search</system:String>
     <system:String x:Key="str_btn_Detect">Detect</system:String>
+    <system:String x:Key="str_btn_OpenDatabase">Open Database</system:String>
     <system:String x:Key="str_btn_SavePNG">Save as PNG</system:String>
 </ResourceDictionary>
