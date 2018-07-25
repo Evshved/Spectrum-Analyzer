@@ -175,7 +175,9 @@ namespace SpectrumAnalyzer.Models
             var ceil = (int)Math.Ceiling(peakX);
             var floor = (int)Math.Floor(peakX);
 
-            return resultDataYList[(ceil > floor ? ceil : floor)];
+            var ceilY = resultDataYList[ceil];
+            var floorY = resultDataYList[floor];
+            return ceilY.Y > floorY.Y ? ceilY : floorY;
         }
 
         private float CalculateIncrement()
