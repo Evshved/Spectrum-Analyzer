@@ -158,15 +158,24 @@ namespace SpectrumAnalyzer.Models
             PeakX = new List<Bin>();
             for (int i = 0; i < peakX.Length; i++)
             {
-                if (i == 0)
+                if (peakX[i] == 0)
                 {
                     continue;
                 }
-                var nearest = Bins.Aggregate((current, next) => Math.Abs((long)current.X - peakX[i]) < Math.Abs((long)next.X - peakX[i]) ? current : next);
-                PeakX.Add(new Bin((float)peakX[i], nearest.Y));
+
+                var nearestBin = GetNearestBin(peakX[i], resultDataYList);
+                PeakX.Add(nearestBin);
             }
 
             return new Spectrum(resultDataYList, "Searched") { FileName = this.FileName, PeakX = this.PeakX };
+        }
+
+        private Bin GetNearestBin(double peakX, List<Bin> resultDataYList)
+        {
+            var ceil = (int)Math.Ceiling(peakX);
+            var floor = (int)Math.Floor(peakX);
+
+            return resultDataYList[(ceil > floor ? ceil : floor)];
         }
 
         private float CalculateIncrement()
