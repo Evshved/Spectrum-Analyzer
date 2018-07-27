@@ -15,15 +15,11 @@ using System.Windows.Shapes;
 
 namespace SpectrumAnalyzer.Views
 {
-    /// <summary>
-    /// Interaction logic for DatabaseWindow.xaml
-    /// </summary>
-    public partial class DatabaseWindow : Window
+    public partial class DatabaseView : Window
     {
-        public DatabaseWindow()
+        public DatabaseView()
         {
             InitializeComponent();
-            ((DatabaseWindowViewModel)DataContext).LoadAllData();
         }
     }
 }

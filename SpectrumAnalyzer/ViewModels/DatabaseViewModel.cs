@@ -1,4 +1,5 @@
-﻿using SpectrumAnalyzer.Helpers;
+﻿using Caliburn.Micro;
+using SpectrumAnalyzer.Helpers;
 using SpectrumAnalyzer.Models;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace SpectrumAnalyzer.ViewModels
 {
-    public class DatabaseWindowViewModel : ViewModelBase
+    public class DatabaseViewModel : Screen
     {
-        public ObservableCollection<Spectrums> Spectrums { get; set; }
+        public BindableCollection<Spectrums> Spectrums { get; set; } = new BindableCollection<Spectrums>();
 
-        public DatabaseWindowViewModel()
+        public DatabaseViewModel()
         {
-            Spectrums = new ObservableCollection<Spectrums>();
+            LoadAllData();
         }
 
         internal void LoadAllData()

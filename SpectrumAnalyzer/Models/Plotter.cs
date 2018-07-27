@@ -13,14 +13,7 @@ namespace SpectrumAnalyzer.Models
         {
             get
             {
-                if (PlotFrame != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return PlotFrame == null ? false : true;
             }
         }
         private Random rnd = new Random();

@@ -7,7 +7,7 @@
     <system:String x:Key="str_lbl_Transitions">Transitions</system:String>
 
     <system:String x:Key="str_btn_Save">Save</system:String>
-    <system:String x:Key="str_btn_Load">Load</system:String>
+    <system:String x:Key="str_btn_Load">Import Files</system:String>
     <system:String x:Key="str_btn_DatabaseAdd">Add to DB</system:String>
     <system:String x:Key="str_btn_Search">Search</system:String>
     <system:String x:Key="str_btn_Detect">Detect</system:String>

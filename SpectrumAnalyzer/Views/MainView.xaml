@@ -1,18 +1,15 @@
-﻿<Window x:Class="SpectrumAnalyzer.Views.MainWindow"
+﻿<Window x:Class="SpectrumAnalyzer.Views.MainView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
         xmlns:viewmodels="clr-namespace:SpectrumAnalyzer.ViewModels"
         mc:Ignorable="d"
         Title="Spectrum Analyzer"
         Height="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.6'}" 
-        Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.5'}" 
-        DataContext="{DynamicResource ViewModel}">
-    <Window.Resources>
-        <viewmodels:ViewModel x:Key="ViewModel"/>
-    </Window.Resources>
+        Width="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={StaticResource WindowSizeConverter}, ConverterParameter='0.5'}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -20,15 +17,15 @@
         </Grid.RowDefinitions>
 
         <ToolBar Grid.Row="0" VerticalAlignment="Top">
-            <Button Style="{StaticResource HorizontalTextButton}" Command="{Binding AddFilesCommand}" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}" x:Name="ImportFiles" />
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}"/>
             <Separator Style="{StaticResource HorizontalSeparator}" />
-            <Button Style="{StaticResource HorizontalTextButton}" Command="{Binding AddToDatabaseCommand}" Content="{StaticResource str_btn_DatabaseAdd}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_DatabaseAdd}" x:Name="AddToDatabase"/>
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}"/>
             <Separator Style="{StaticResource HorizontalSeparator}" />
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}"/>
             <Separator Style="{StaticResource HorizontalSeparator}" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_OpenDatabase}" Command="{Binding OpenDatabaseCommand}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_OpenDatabase}" x:Name="OpenDatabaseView"/>
         </ToolBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -44,7 +41,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Files}"/>
-                <ListBox Style="{StaticResource FilesListbox}" ItemsSource="{Binding Files}" Grid.Row="1" SelectionChanged="ListBox_SelectionChanged"/>
+                <ListBox Style="{StaticResource FilesListbox}" ItemsSource="{Binding Files}" Grid.Row="1" cal:Message.Attach="[Event SelectionChanged] = [Files_SelectionChanged($eventArgs)]" />
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -54,7 +51,7 @@
 
                 <oxy:PlotView Model="{Binding Plotter.PlotFrame}" Grid.Row="0" />
                 <ToolBar Grid.Row="1">
-                    <Button Style="{StaticResource HorizontalTextButton}" Command="{Binding SaveImageCommand}" Content="{StaticResource str_btn_SavePNG}" />
+                    <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_SavePNG}" x:Name="SaveImage" />
                 </ToolBar>
             </Grid>
             <ToolBarTray Orientation="Vertical" Grid.Column="2">
@@ -100,7 +97,7 @@
                                     <Setter.Value>
                                         <ControlTemplate>
                                             <Border Background="Transparent" Margin="{TemplateBinding Padding}">
-                                                <CheckBox IsChecked="{Binding IsVisible}" Content="{Binding Name}" VerticalContentAlignment="Center" Click="CheckBox_Click" />
+                                                <CheckBox IsChecked="{Binding IsVisible}" Content="{Binding Name}" VerticalContentAlignment="Center" cal:Message.Attach="[Event Click] = [TransitionCheckBoxChanged($source, $eventArgs)]" />
                                             </Border>
                                         </ControlTemplate>
                                     </Setter.Value>

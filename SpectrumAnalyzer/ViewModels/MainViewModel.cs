@@ -1,8 +1,10 @@
+﻿using Caliburn.Micro;
 using Microsoft.Win32;
 using OxyPlot;
 using OxyPlot.Series;
 using SpectrumAnalyzer.Helpers;
 using SpectrumAnalyzer.Models;
+using SpectrumAnalyzer.Views;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -12,21 +14,38 @@ using System.Windows.Threading;
 
 namespace SpectrumAnalyzer.ViewModels
 {
-    public class ViewModel : ViewModelBase
+    public class MainViewModel : Screen
     {
-        readonly Dispatcher _dispatcher;
-        public Plotter Plotter { get; set; }
-        public ObservableCollection<ListBoxFileItem> Files { get; set; }
-        public ObservableCollection<Spectrum> Transitions { get; set; }
-        public RelayCommand AddFilesCommand { get; set; }
-        public RelayCommand SaveImageCommand { get; set; }
-        public RelayCommand AddToDatabaseCommand { get; set; }
+        public Plotter Plotter { get; set; } = new Plotter();
+        public BindableCollection<ListBoxFileItem> Files { get; set; } = new BindableCollection<ListBoxFileItem>();
+        public BindableCollection<Spectrum> Transitions { get; set; } = new BindableCollection<Spectrum>();
 
-        #region EventsProcessing
-        public void FileSelectionChanged(object sender, SelectionChangedEventArgs args)
+        public void Files_SelectionChanged(SelectionChangedEventArgs args)
         {
-            _fileSelectionChanged(sender);
+            Transitions.Clear();
+            Plotter.Clear();
+
+            ListBoxFileItem selectedFile = args.AddedItems.Cast<ListBoxFileItem>().First();
+            string contents = ReadFromFile(selectedFile.Path);
+
+            if (!string.IsNullOrEmpty(contents))
+            {
+                var originalSpectrum = new Spectrum(contents, "Original");
+                originalSpectrum.FileName = selectedFile.Name;
+                Plotter.Plot(originalSpectrum, null);
+                Transitions.Add(originalSpectrum);
+                // var quantized = originalSpectrum.GetQuantized();
+                // Transitions.Add(quantized);
+                var searched = originalSpectrum.GetSearched();
+                Transitions.Add(searched);
+                Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked);
+                foreach (var item in searched.PeakX)
+                {
+                    Plotter.MarkPeak(item.X, item.Y);
+                }
+            }
         }
+
         public void TransitionCheckBoxChanged(object sender, RoutedEventArgs args)
         {
             CheckBox checkBox = sender as CheckBox;
@@ -48,19 +67,8 @@ namespace SpectrumAnalyzer.ViewModels
                 }
             }
         }
-        #endregion
 
-        public ViewModel()
-        {
-            _dispatcher = Dispatcher.CurrentDispatcher;
-            Plotter = new Plotter();
-            Transitions = new ObservableCollection<Spectrum>();
-            Files = new ObservableCollection<ListBoxFileItem>();
-            AddFilesCommand = new RelayCommand(AddFiles);
-            SaveImageCommand = new RelayCommand(SaveImage);
-            AddToDatabaseCommand = new RelayCommand(AddToDB);
-        }
-        private void AddFiles(object parameter)
+        public void ImportFiles(object parameter)
         {
             OpenFileDialog dialog = new OpenFileDialog
             {
@@ -94,7 +102,7 @@ namespace SpectrumAnalyzer.ViewModels
             }
         }
 
-        private void SaveImage(object parameter)
+        public void SaveImage(object parameter)
         {
             SaveFileDialog dialog = new SaveFileDialog
             {
@@ -105,37 +113,11 @@ namespace SpectrumAnalyzer.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                IO.SaveImage(Plotter, dialog.FileName, _dispatcher);
+                IO.SaveImage(Plotter, dialog.FileName, Dispatcher.CurrentDispatcher);
             }
         }
 
-        private void _fileSelectionChanged(object sender)
-        {
-            Transitions.Clear();
-            Plotter.Clear();
-
-            ListBoxFileItem selectedFile = (ListBoxFileItem)((ListBox)sender).SelectedItem;
-            string contents = ReadFromFile(selectedFile.Path);
-
-            if (!string.IsNullOrEmpty(contents))
-            {
-                var originalSpectrum = new Spectrum(contents, "Original");
-                originalSpectrum.FileName = selectedFile.Name;
-                Plotter.Plot(originalSpectrum, null);
-                Transitions.Add(originalSpectrum);
-                // var quantized = originalSpectrum.GetQuantized();
-                // Transitions.Add(quantized);
-                var searched = originalSpectrum.GetSearched();
-                Transitions.Add(searched);
-                Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), MarkPeakCallback);
-                //foreach (var item in searched.PeakX)
-                //{
-                //    Plotter.MarkPeak(item.X, item.Y);
-                //}
-            }
-        }
-
-        private void MarkPeakCallback(object s, OxyMouseDownEventArgs e)
+        private void OnSeriesClicked(object s, OxyMouseDownEventArgs e)
         {
             var series = s as LineSeries;
             var x = series.InverseTransform(e.Position).X;
@@ -153,9 +135,8 @@ namespace SpectrumAnalyzer.ViewModels
             return result;
         }
 
-        private void AddToDB(object parameter)
+        public void AddToDatabase(object parameter)
         {
-            var database = new DBConnection();
             var title = Plotter.PlotFrame.Title;
             var series = Plotter.PlotFrame.Series[0] as LineSeries;
             string data = string.Empty;
@@ -163,7 +144,13 @@ namespace SpectrumAnalyzer.ViewModels
             {
                 data += string.Format("({0};{1})", point.X, point.Y);
             }
-           //  database.Put("Spectrums", title, data); // Из за этой строчки у меня не компилируется !!!!
+            Database.Put(new Spectrums() { PEAKS = data, TITLE = title });
+        }
+
+        public void OpenDatabaseView()
+        {
+            IWindowManager manager = new WindowManager();
+            manager.ShowWindow(new DatabaseViewModel(), null, null);
         }
     }
 }
