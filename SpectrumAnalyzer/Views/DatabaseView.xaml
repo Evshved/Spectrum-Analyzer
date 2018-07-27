@@ -4,13 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:viewmodels="clr-namespace:SpectrumAnalyzer.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
         xmlns:local="clr-namespace:SpectrumAnalyzer.Views"
         mc:Ignorable="d"
         Title="Database" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0" AutoGenerateColumns="True" SelectionMode="Single" SelectionUnit="FullRow" x:Name="Spectrums" ItemsSource="{Binding Spectrums}" />
+        <Button Grid.Row="0" Style="{StaticResource HorizontalTextButton}" x:Name="DeleteSpectrums" Content="{StaticResource str_btn_DeleteFromDatabase}" Width="140"/>
+        <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Extended" SelectionUnit="FullRow" x:Name="Spectrums" ItemsSource="{Binding Spectrums}" cal:Message.Attach="[Event SelectionChanged] = [Spectrums_SelectionChanged($eventArgs)]">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Path=ID}" />
+                <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Path=TITLE}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
