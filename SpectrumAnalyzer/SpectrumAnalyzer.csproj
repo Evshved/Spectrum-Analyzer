@@ -111,7 +111,8 @@
     <Compile Include="Models\Bin.cs" />
     <Compile Include="Helpers\IO.cs" />
     <Compile Include="Helpers\WindowSizeConverter.cs" />
-    <Compile Include="Models\Spectrums.cs" />
+    <Compile Include="Models\SpectrumBase.cs" />
+    <Compile Include="Models\SubstanceBase.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Models\Spectrum.cs" />
     <Compile Include="Helpers\ListBoxFileItem.cs" />
@@ -121,7 +122,6 @@
     <Content Include="AppData\LOCAL.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Models\ChartView.cs" />
     <Page Include="Resources\Localization_en.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

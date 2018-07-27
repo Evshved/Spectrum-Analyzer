@@ -10,10 +10,10 @@
         Title="Database" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Button Grid.Row="0" Style="{StaticResource HorizontalTextButton}" x:Name="DeleteSpectrums" Content="{StaticResource str_btn_DeleteFromDatabase}" Width="140"/>
+        <Button Grid.Row="0" Style="{StaticResource HorizontalTextButton}" x:Name="DeleteSpectrums" Content="{StaticResource str_btn_DeleteFromDatabase}" Width="140" />
         <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Extended" SelectionUnit="FullRow" x:Name="Spectrums" ItemsSource="{Binding Spectrums}" cal:Message.Attach="[Event SelectionChanged] = [Spectrums_SelectionChanged($eventArgs)]">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Path=ID}" />

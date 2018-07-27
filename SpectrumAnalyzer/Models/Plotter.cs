@@ -4,6 +4,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace SpectrumAnalyzer.Models
 {
@@ -16,7 +17,7 @@ namespace SpectrumAnalyzer.Models
                 return PlotFrame == null ? false : true;
             }
         }
-        private Random rnd = new Random();
+
         public PlotModel PlotFrame { get; private set; }
 
         public Plotter()
@@ -46,8 +47,6 @@ namespace SpectrumAnalyzer.Models
             {
                 return;
             }
-
-            // TODO: Spectrum checkouts
 
             PlotFrame.Title = spectrum.FileName;
 
@@ -182,7 +181,7 @@ namespace SpectrumAnalyzer.Models
                 AbsoluteMaximum = maxX,
                 Minimum = minX,
                 Maximum = maxX,
-                Title = "Δν, cm⁻¹",
+                Title = (string)Application.Current.Resources["str_plotter_xaxis"],
                 AxisTitleDistance = 10
             });
             PlotFrame.Axes.Add(new LinearAxis
@@ -192,7 +191,7 @@ namespace SpectrumAnalyzer.Models
                 AbsoluteMaximum = maxY * 1.25,
                 Minimum = minY,
                 Maximum = maxY * 1.25,
-                Title = "Интенсивность, о.е.",
+                Title = (string)Application.Current.Resources["str_plotter_yaxis"],
                 AxisTitleDistance = 10
             });
         }

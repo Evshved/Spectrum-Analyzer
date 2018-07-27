@@ -1,13 +1,11 @@
 ﻿using SQLite.Net;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace SpectrumAnalyzer.Models
 {
     public static class Database
     {
         private const string databaseFileName = @"AppData\LOCAL.db";
+
         private static SQLiteConnection localDbConnection;
 
         public static SQLiteConnection GetConnection()
@@ -19,14 +17,14 @@ namespace SpectrumAnalyzer.Models
             return localDbConnection;
         }
 
-        public static void Put(Spectrums spec)
+        public static void Put(SpectrumBase spec)
         {
             GetConnection().Insert(spec);
         }
 
-        public static Spectrums Get(string title)
+        public static SpectrumBase Get(string title)
         {
-            var spec = GetConnection().Table<Spectrums>().FirstOrDefault();
+            var spec = GetConnection().Table<SpectrumBase>().FirstOrDefault();
             return spec;
         }
 

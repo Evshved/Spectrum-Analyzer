@@ -4,8 +4,6 @@ using OxyPlot;
 using OxyPlot.Series;
 using SpectrumAnalyzer.Helpers;
 using SpectrumAnalyzer.Models;
-using SpectrumAnalyzer.Views;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -144,7 +142,7 @@ namespace SpectrumAnalyzer.ViewModels
             {
                 data += string.Format("({0};{1})", point.X, point.Y);
             }
-            Database.Put(new Spectrums() { PEAKS = data, TITLE = title });
+            Database.Put(new SpectrumBase() { Peaks = data, Name = title });
         }
 
         public void OpenDatabaseView()

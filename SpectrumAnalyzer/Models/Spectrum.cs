@@ -1,30 +1,31 @@
 ﻿using SpectrumAnalyzer.Helpers;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
 namespace SpectrumAnalyzer.Models
 {
-    public class Spectrum : INotifyPropertyChanged
+    public class Spectrum
     {
         private string[] _contents;
-        private bool _isVisible;
-        public string Name { get; set; }
         private string _fileName;
-        public string FileName { get { return _fileName.Split('.')[0]; } set { _fileName = value; } }
-        public bool IsVisible { get { return _isVisible; } set { _isVisible = value; OnPropertyChanged("IsVisible"); } }
-        public List<Bin> Bins;
-        public List<Bin> PeakX;
-        public readonly float LeftBound = 250;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public string Name { get; set; }
 
-        protected void OnPropertyChanged(string name)
+        public string FileName
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            get { return _fileName.Split('.')[0]; }
+            set { _fileName = value; }
         }
+
+        public bool IsVisible { get; set; }
+
+        public List<Bin> Bins;
+
+        public List<Bin> PeakX;
+
+        public readonly float LeftBound = 250;
 
         public Spectrum(string contents, string fileName)
         {
@@ -130,7 +131,6 @@ namespace SpectrumAnalyzer.Models
             bool backgroundRemove = true;
             bool markov = true;
 
-            double denoizeLevel = 10;
             List<string> totalPeaks = new List<string>();
 
             int size = this.Bins.Count;
@@ -256,7 +256,7 @@ namespace SpectrumAnalyzer.Models
             j = (int)(5.0 * sigma + 0.5);
             if (j >= PEAK_WINDOW / 2)
             {
-                Console.WriteLine("SearchHighRes", "Too large sigma");
+                Console.WriteLine("Too large sigma");
                 return 0;
             }
 
@@ -264,7 +264,7 @@ namespace SpectrumAnalyzer.Models
             {
                 if (averageWindow <= 0)
                 {
-                    Console.WriteLine("SearchHighRes", "Averaging window must be positive");
+                    Console.WriteLine("Averaging window must be positive");
                     return 0;
                 }
             }
@@ -273,7 +273,7 @@ namespace SpectrumAnalyzer.Models
             {
                 if (size < 2 * numberIterations + 1)
                 {
-                    Console.WriteLine("SearchHighRes", "Too large clipping window");
+                    Console.WriteLine("Too large clipping window");
                     return 0;
                 }
             }
@@ -747,7 +747,7 @@ namespace SpectrumAnalyzer.Models
             fNPeaks = peak_index;
 
             if (peak_index == maxPeaks)
-                Console.WriteLine("SearchHighRes", "Peak buffer full");
+                Console.WriteLine("Peak buffer full");
 
             return fNPeaks;
         }

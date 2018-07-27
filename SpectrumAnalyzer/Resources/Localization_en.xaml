@@ -14,4 +14,7 @@
     <system:String x:Key="str_btn_OpenDatabase">Open Database</system:String>
     <system:String x:Key="str_btn_SavePNG">Save as PNG</system:String>
     <system:String x:Key="str_btn_DeleteFromDatabase">Delete</system:String>
+
+    <system:String x:Key="str_plotter_xaxis">Δν, cm⁻¹</system:String>
+    <system:String x:Key="str_plotter_yaxis">Intensity, units</system:String>
 </ResourceDictionary>

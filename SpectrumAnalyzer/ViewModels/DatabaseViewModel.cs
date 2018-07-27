@@ -1,20 +1,16 @@
 ﻿using Caliburn.Micro;
-using SpectrumAnalyzer.Helpers;
 using SpectrumAnalyzer.Models;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace SpectrumAnalyzer.ViewModels
 {
     public class DatabaseViewModel : Screen
     {
-        public BindableCollection<Spectrums> Spectrums { get; set; } = new BindableCollection<Spectrums>();
-        public List<Spectrums> SelectedSpectrums { get; set; } = new List<Spectrums>();
+        public BindableCollection<SpectrumBase> Spectrums { get; set; } = new BindableCollection<SpectrumBase>();
+
+        public List<SpectrumBase> SelectedSpectrums { get; set; } = new List<SpectrumBase>();
 
         public DatabaseViewModel()
         {
@@ -23,7 +19,7 @@ namespace SpectrumAnalyzer.ViewModels
 
         internal void LoadAllData()
         {
-            var spectrums = Database.GetConnection().Table<Spectrums>().ToList();
+            var spectrums = Database.GetConnection().Table<SpectrumBase>().ToList();
             foreach (var spectrum in spectrums)
             {
                 Spectrums.Add(spectrum);
@@ -32,7 +28,9 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void DeleteSpectrums()
         {
-            foreach (var selectedSpectrum in SelectedSpectrums.ToList()) // .ToList() conversion is important here, as the code itself will modify the elements of the original collection (ToList instatinates a copy of collection)
+            // .ToList() conversion is important here, as the code itself will modify 
+            // the elements of the original collection (ToList() instatinates a copy of the collection)
+            foreach (var selectedSpectrum in SelectedSpectrums.ToList())
             {
                 Database.GetConnection().Delete(selectedSpectrum);
                 SelectedSpectrums.Remove(selectedSpectrum);
@@ -47,8 +45,8 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void Spectrums_SelectionChanged(SelectionChangedEventArgs args)
         {
-            SelectedSpectrums.AddRange(args.AddedItems.Cast<object>().Where(x => x is Spectrums).Cast<Spectrums>());
-            args.RemovedItems.Cast<object>().Where(x => x is Spectrums).Cast<Spectrums>().ToList().ForEach(x => SelectedSpectrums.Remove(x));
+            SelectedSpectrums.AddRange(args.AddedItems.Cast<object>().Where(x => x is SpectrumBase).Cast<SpectrumBase>());
+            args.RemovedItems.Cast<object>().Where(x => x is SpectrumBase).Cast<SpectrumBase>().ToList().ForEach(x => SelectedSpectrums.Remove(x));
             NotifyOfPropertyChange(() => CanDeleteSpectrums);
         }
     }

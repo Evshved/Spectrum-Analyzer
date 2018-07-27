@@ -20,33 +20,33 @@
         <Setter Property="Margin" Value="0,10,0,0" />
     </Style>
     <Style TargetType="Separator" x:Key="HorizontalSeparator">
-        <Setter Property="Margin" Value="10,0,0,0"/>
+        <Setter Property="Margin" Value="10,0,0,0" />
     </Style>
     <Style TargetType="ContentControl" x:Key="VerticalIconButton">
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
     <Style TargetType="Label" x:Key="WorkspaceLabel">
         <!--Empty-->
     </Style>
     <Style TargetType="ListBox" x:Key="FilesListbox">
-        <Setter Property="MinWidth" Value="120"/>
-        <Setter Property="MaxWidth" Value="180"/>
-        <Setter Property="MaxHeight" Value="760"/>
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+        <Setter Property="MinWidth" Value="120" />
+        <Setter Property="MaxWidth" Value="180" />
+        <Setter Property="MaxHeight" Value="760" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
     </Style>
     <Style TargetType="ListBox" x:Key="SearchListbox">
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
     </Style>
     <Style TargetType="ListView" x:Key="TransitionsListView">
-        <Setter Property="MinHeight" Value="100"/>
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+        <Setter Property="MinHeight" Value="100" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
     </Style>
-    <helpers:WindowSizeConverter x:Key="WindowSizeConverter"/>
+    <helpers:WindowSizeConverter x:Key="WindowSizeConverter" />
 </ResourceDictionary>

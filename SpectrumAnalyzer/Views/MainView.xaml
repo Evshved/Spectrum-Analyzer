@@ -18,14 +18,14 @@
 
         <ToolBar Grid.Row="0" VerticalAlignment="Top">
             <Button Style="{StaticResource HorizontalTextButton}" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}" x:Name="ImportFiles" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}" />
             <Separator Style="{StaticResource HorizontalSeparator}" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_DatabaseAdd}" x:Name="AddToDatabase"/>
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_DatabaseAdd}" x:Name="AddToDatabase" />
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}" />
             <Separator Style="{StaticResource HorizontalSeparator}" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}" />
             <Separator Style="{StaticResource HorizontalSeparator}" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_OpenDatabase}" x:Name="OpenDatabaseView"/>
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_OpenDatabase}" x:Name="OpenDatabaseView" />
         </ToolBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -40,7 +40,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Files}"/>
+                <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Files}" />
                 <ListBox Style="{StaticResource FilesListbox}" ItemsSource="{Binding Files}" Grid.Row="1" cal:Message.Attach="[Event SelectionChanged] = [Files_SelectionChanged($eventArgs)]" />
             </Grid>
             <Grid Grid.Column="1">
@@ -76,7 +76,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Search}"/>
+                    <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Search}" />
                     <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1">
                         <TextBlock>91% - Calcite</TextBlock>
                         <TextBlock>87% - Siderite</TextBlock>
@@ -89,7 +89,7 @@
                         <TextBlock>34% - Cerussite</TextBlock>
                         <TextBlock>30% - Natrite</TextBlock>
                     </ListBox>
-                    <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="2" Content="{StaticResource str_lbl_Transitions}"/>
+                    <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="2" Content="{StaticResource str_lbl_Transitions}" />
                     <ListView ItemsSource="{Binding Transitions}" Style="{StaticResource TransitionsListView}" Grid.Row="3">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
