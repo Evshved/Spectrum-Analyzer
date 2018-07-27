@@ -162,21 +162,16 @@ namespace SpectrumAnalyzer.Models
             double minY = spectrum.Bins.Min(x => x.Y);
             double maxY = spectrum.Bins.Max(x => x.Y);
 
-            for (int i = 0; i < PlotFrame.Series.Count; i++)
+            foreach (var series in PlotFrame.Series.OfType<LineSeries>())
             {
-                var serie = this.PlotFrame.Series[i] as LineSeries;
-                var _minX = serie.Points.Min(x => x.X);
-                var _maxX = serie.Points.Max(x => x.X);
-                var _minY = serie.Points.Min(x => x.Y);
-                var _maxY = serie.Points.Max(x => x.Y);
-                if (_minX < minX)
-                    minX = _minX;
-                if (_maxX > maxX)
-                    maxX = _maxX;
-                if (_minY < minY)
-                    minY = _minY;
-                if (_maxY > maxY)
-                    maxY = _maxY;
+                var _minX = series.Points.Min(x => x.X);
+                var _maxX = series.Points.Max(x => x.X);
+                var _minY = series.Points.Min(x => x.Y);
+                var _maxY = series.Points.Max(x => x.Y);
+                if (_minX < minX) minX = _minX;
+                if (_maxX > maxX) maxX = _maxX;
+                if (_minY < minY) minY = _minY;
+                if (_maxY > maxY) maxY = _maxY;
             }
 
             PlotFrame.Axes.Clear();
