@@ -32,12 +32,11 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void DeleteSpectrums()
         {
-            var spectrumsToRemove = SelectedSpectrums;
-            foreach (var spectrum in spectrumsToRemove)
+            foreach (var selectedSpectrum in SelectedSpectrums.ToList()) // .ToList() conversion is important here, as the code itself will modify the elements of the original collection (ToList instatinates a copy of collection)
             {
-                Database.GetConnection().Delete<Spectrum>(spectrum.ID);
-                SelectedSpectrums.Remove(spectrum);
-                Spectrums.Remove(spectrum);
+                Database.GetConnection().Delete(selectedSpectrum);
+                SelectedSpectrums.Remove(selectedSpectrum);
+                Spectrums.Remove(selectedSpectrum);
             }
         }
 
