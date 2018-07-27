@@ -128,19 +128,19 @@ namespace SpectrumAnalyzer.Models
 
         private ScatterSeries CreatePeakSeries()
         {
-            const int NumberOfAngles = 4;
-            var customMarkerOutline = new ScreenPoint[NumberOfAngles];
-            for (int i = 0; i < NumberOfAngles; i++)
+            var customMarker = new List<ScreenPoint>()
             {
-                double th = Math.PI * (2.0 * i / (NumberOfAngles - 1) - 0.5);
-                const double R = 1;
-                customMarkerOutline[i] = new ScreenPoint(Math.Cos(th) * R, Math.Sin(th) * R);
-            }
+                new ScreenPoint(1, -2),
+                new ScreenPoint(0.3, -1.3),
+                new ScreenPoint(0, -0.5),
+                new ScreenPoint(-0.3, -1.3),
+                new ScreenPoint(-1, -2)
+            };
 
             ScatterSeries s = new ScatterSeries()
             {
                 MarkerType = MarkerType.Custom,
-                MarkerOutline = customMarkerOutline,
+                MarkerOutline = customMarker.ToArray(),
                 MarkerFill = OxyColors.DarkRed,
                 MarkerSize = 10,
                 TrackerKey = "peaks"
