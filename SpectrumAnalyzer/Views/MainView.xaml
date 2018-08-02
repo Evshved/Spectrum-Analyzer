@@ -16,7 +16,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ToolBar Grid.Row="0" VerticalAlignment="Top">
+        <ToolBar Grid.Row="0" VerticalAlignment="Top" ToolBarTray.IsLocked="True">
             <Button Style="{StaticResource HorizontalTextButton}" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}" x:Name="ImportFiles" />
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}" />
             <Separator Style="{StaticResource HorizontalSeparator}" />
@@ -50,11 +50,11 @@
                 </Grid.RowDefinitions>
 
                 <oxy:PlotView Model="{Binding Plotter.PlotFrame}" Grid.Row="0" />
-                <ToolBar Grid.Row="1">
+                <ToolBar Grid.Row="1" ToolBarTray.IsLocked="True">
                     <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_SavePNG}" x:Name="SaveImage" />
                 </ToolBar>
             </Grid>
-            <ToolBarTray Orientation="Vertical" Grid.Column="2">
+            <ToolBarTray Orientation="Vertical" Grid.Column="2" ToolBarTray.IsLocked="True">
                 <ToolBar MaxWidth="30">
                     <Button Style="{StaticResource VerticalButton}">
                         <ContentControl Style="{StaticResource VerticalIconButton}" Content="{StaticResource Icon_BorderSelectorWidth}" />
