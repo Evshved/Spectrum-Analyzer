@@ -34,7 +34,7 @@ namespace SpectrumAnalyzer.ViewModels
                 return;
             }
 
-            SelectedPoint = args.AddedItems.Cast<ListBoxScatterPointItem>().First();
+            SelectedPoint = args.AddedItems.Count > 0 ? args.AddedItems.Cast<ListBoxScatterPointItem>().First() : null;
             NotifyOfPropertyChange(() => CanSubmit);
         }
 
