@@ -29,31 +29,140 @@ namespace SpectrumAnalyzer.ViewModels
             Transitions.Clear();
             Plotter.Clear();
 
-            if (args.AddedItems.Count == 0 || args.AddedItems.Cast<object>().Where(x => x is ListBoxFileItem).Count() != 1)
-            {
-                return;
-            }
+            SelectedFile = args.AddedItems.Cast<object>().Where(x => x is ListBoxFileItem).Count() == 1
+                ? args.AddedItems.Cast<ListBoxFileItem>().First()
+                : null;
 
-            SelectedFile = args.AddedItems.Cast<ListBoxFileItem>().FirstOrDefault();
+            NotifyOfPropertyChange(() => CanDetectPeaks);
+        }
+
+        #region Triggers
+        public bool CanAddToDatabase
+        {
+            get
+            {
+                return Transitions.Count > 1 ? true : false;
+            }
+        }
+
+        public bool CanSaveImage
+        {
+            get
+            {
+                return Transitions.Count > 1 ? true : false;
+            }
+        }
+
+        public bool CanSaveSpectrum
+        {
+            get
+            {
+                return Transitions.Any(x => x.Name == "Original" || x.Name == "Searched") ? true : false;
+            }
+        }
+
+        public bool CanDetectPeaks
+        {
+            get
+            {
+                return SelectedFile == null ? false : true;
+            }
+        }
+        #endregion
+
+        #region Actions
+        public void ImportFiles(object parameter)
+        {
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                Multiselect = true
+            };
+
+
+            if (dialog.ShowDialog() == true)
+            {
+                if (dialog.FileNames.Any())
+                {
+                    AddToQueue(dialog.FileNames);
+                }
+            }
+        }
+
+        public void SaveSpectrum()
+        {
+
+        }
+
+        public void DetectPeaks()
+        {
+            Transitions.Clear();
+            Plotter.Clear();
+
             string contents = ReadFromFile(SelectedFile.Path);
 
             if (!string.IsNullOrEmpty(contents))
             {
-                var originalSpectrum = new Spectrum(contents, "Original");
-                originalSpectrum.FileName = SelectedFile.Name;
-                Plotter.Plot(originalSpectrum, null);
-                Transitions.Add(originalSpectrum);
-                // var quantized = originalSpectrum.GetQuantized();
-                // Transitions.Add(quantized);
-                var searched = originalSpectrum.GetSearched();
-                Transitions.Add(searched);
-                Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked);
-                foreach (var item in searched.PeakX)
-                {
-                    Plotter.Selection = Plotter.StageType.Automatic;
-                    Plotter.MarkPeak(item.X, item.Y);
-                    Plotter.Selection = Plotter.StageType.CanBeManual;
-                }
+                ProcessFile(contents);
+            }
+
+            NotifyOfPropertyChange(() => CanAddToDatabase);
+            NotifyOfPropertyChange(() => CanSaveImage);
+            NotifyOfPropertyChange(() => CanSaveSpectrum);
+        }
+
+        public void AddToDatabase(object parameter)
+        {
+            var title = Plotter.PlotFrame.Title;
+            var series = Plotter.PlotFrame.Series[0] as LineSeries;
+            string data = string.Empty;
+            foreach (DataPoint point in series.Points)
+            {
+                data += string.Format("({0};{1})", point.X, point.Y);
+            }
+            Database.Put(new SpectrumBase() { Peaks = data, Name = title });
+        }
+
+        public void OpenDatabaseView()
+        {
+            IWindowManager manager = new WindowManager();
+            manager.ShowWindow(new DatabaseViewModel(), null, null);
+        }
+
+        public void SaveImage(object parameter)
+        {
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                FileName = Plotter.PlotFrame.Title + ".png",
+                Filter = "PNG (*.png)|*.png",
+                FilterIndex = 1
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                IO.SaveImage(Plotter, dialog.FileName, Dispatcher.CurrentDispatcher);
+            }
+        }
+        #endregion
+
+        public void ProcessFile(string contents)
+        {
+            var originalSpectrum = new Spectrum(contents, "Original");
+            originalSpectrum.FileName = SelectedFile.Name;
+            Plotter.Plot(originalSpectrum, null);
+            Transitions.Add(originalSpectrum);
+            // var quantized = originalSpectrum.GetQuantized();
+            // Transitions.Add(quantized);
+            var searched = originalSpectrum.GetSearched();
+            Transitions.Add(searched);
+            Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked);
+            foreach (var item in searched.PeakX)
+            {
+                Plotter.Selection = Plotter.StageType.Automatic;
+                Plotter.MarkPeak(item.X, item.Y);
+                Plotter.Selection = Plotter.StageType.CanBeManual;
             }
         }
 
@@ -79,26 +188,6 @@ namespace SpectrumAnalyzer.ViewModels
             }
         }
 
-        public void ImportFiles(object parameter)
-        {
-            OpenFileDialog dialog = new OpenFileDialog
-            {
-                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
-                FilterIndex = 1,
-                RestoreDirectory = true,
-                Multiselect = true
-            };
-
-
-            if (dialog.ShowDialog() == true)
-            {
-                if (dialog.FileNames.Any())
-                {
-                    AddToQueue(dialog.FileNames);
-                }
-            }
-        }
-
         private void AddToQueue(string[] fileNames)
         {
             foreach (var path in fileNames)
@@ -110,21 +199,6 @@ namespace SpectrumAnalyzer.ViewModels
                     var file = new ListBoxFileItem(fileName, path);
                     Files.Add(file);
                 }
-            }
-        }
-
-        public void SaveImage(object parameter)
-        {
-            SaveFileDialog dialog = new SaveFileDialog
-            {
-                FileName = Plotter.PlotFrame.Title + ".png",
-                Filter = "PNG (*.png)|*.png",
-                FilterIndex = 1
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                IO.SaveImage(Plotter, dialog.FileName, Dispatcher.CurrentDispatcher);
             }
         }
 
@@ -144,24 +218,6 @@ namespace SpectrumAnalyzer.ViewModels
                 result = File.ReadAllText(filePath);
             }
             return result;
-        }
-
-        public void AddToDatabase(object parameter)
-        {
-            var title = Plotter.PlotFrame.Title;
-            var series = Plotter.PlotFrame.Series[0] as LineSeries;
-            string data = string.Empty;
-            foreach (DataPoint point in series.Points)
-            {
-                data += string.Format("({0};{1})", point.X, point.Y);
-            }
-            Database.Put(new SpectrumBase() { Peaks = data, Name = title });
-        }
-
-        public void OpenDatabaseView()
-        {
-            IWindowManager manager = new WindowManager();
-            manager.ShowWindow(new DatabaseViewModel(), null, null);
         }
     }
 }

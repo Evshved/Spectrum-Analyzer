@@ -29,12 +29,9 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void Points_SelectionChanged(SelectionChangedEventArgs args)
         {
-            if (args.AddedItems.Count == 0 || args.AddedItems.Cast<object>().Where(x => x is ListBoxScatterPointItem).Count() != 1)
-            {
-                return;
-            }
-
-            SelectedPoint = args.AddedItems.Count > 0 ? args.AddedItems.Cast<ListBoxScatterPointItem>().First() : null;
+            SelectedPoint = args.AddedItems.Cast<object>().Where(x => x is ListBoxScatterPointItem).Count() == 1 
+                ? args.AddedItems.Cast<ListBoxScatterPointItem>().First() 
+                : null;
             NotifyOfPropertyChange(() => CanSubmit);
         }
 

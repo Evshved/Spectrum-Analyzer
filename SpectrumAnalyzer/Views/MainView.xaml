@@ -18,12 +18,12 @@
 
         <ToolBar Grid.Row="0" VerticalAlignment="Top" ToolBarTray.IsLocked="True">
             <Button Style="{StaticResource HorizontalTextButton}" Background="#FF98D6B4" Content="{StaticResource str_btn_Load}" x:Name="ImportFiles" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}" />
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Save}" x:Name="SaveSpectrum" />
             <Separator Style="{StaticResource HorizontalSeparator}" />
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_DatabaseAdd}" x:Name="AddToDatabase" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}" />
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Search}" IsEnabled="False" />
             <Separator Style="{StaticResource HorizontalSeparator}" />
-            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}" />
+            <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_Detect}" x:Name="DetectPeaks"/>
             <Separator Style="{StaticResource HorizontalSeparator}" />
             <Button Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_OpenDatabase}" x:Name="OpenDatabaseView" />
         </ToolBar>
