@@ -5,6 +5,8 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using System.Collections.Generic;
 using System.Windows;
+using Caliburn.Micro;
+using SpectrumAnalyzer.ViewModels;
 
 namespace SpectrumAnalyzer.Models
 {
@@ -17,6 +19,14 @@ namespace SpectrumAnalyzer.Models
                 return PlotFrame == null ? false : true;
             }
         }
+
+        public enum StageType
+        {
+            Automatic = 0,
+            CanBeManual = 1
+        }
+
+        public StageType Selection;
 
         public PlotModel PlotFrame { get; private set; }
 
@@ -98,10 +108,28 @@ namespace SpectrumAnalyzer.Models
             if (this.Initialized)
             {
                 ScatterSeries peakSeries = InstantinatePeakMarkSeries();
-                var existingPoint = peakSeries.Points.FirstOrDefault(p => p.X == x);
-                if (existingPoint != null)
+
+                if (Selection == StageType.CanBeManual)
                 {
-                    peakSeries.Points.Remove(existingPoint);
+                    var threshold = 50;
+                    var nearestPoints = GetNearestPoints(peakSeries.Points, x, threshold);
+
+                    if (nearestPoints == null || nearestPoints.Count == 0)
+                    {
+                        peakSeries.Points.Add(new ScatterPoint(x, y));
+                    }
+                    else if (nearestPoints.Count == 1)
+                    {
+                        peakSeries.Points.Remove(nearestPoints.First());
+                    }
+                    else if (nearestPoints.Count > 1)
+                    {
+                        ScatterPoint chosenPeak = AskForPeakToRemove(nearestPoints);
+                        if (chosenPeak != null)
+                        {
+                            peakSeries.Points.Remove(chosenPeak);
+                        }
+                    }
                 }
                 else
                 {
@@ -109,6 +137,27 @@ namespace SpectrumAnalyzer.Models
                 }
                 PlotFrame.InvalidatePlot(true);
             }
+        }
+
+        private ScatterPoint AskForPeakToRemove(List<ScatterPoint> nearestPoints)
+        {
+            IWindowManager manager = new WindowManager();
+            var dialog = new PointToRemoveDialogViewModel(nearestPoints);
+            bool? result = manager.ShowDialog(dialog, null, null);
+
+            if (result == true)
+            {
+                return dialog.SelectedPoint.Point;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private List<ScatterPoint> GetNearestPoints(List<ScatterPoint> points, double basePoint, int windowSize)
+        {
+            return points.Where(point => point.X > basePoint - windowSize && point.X < basePoint + windowSize).ToList();
         }
 
         private ScatterSeries InstantinatePeakMarkSeries()

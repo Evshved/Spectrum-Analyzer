@@ -4,6 +4,8 @@ using OxyPlot;
 using OxyPlot.Series;
 using SpectrumAnalyzer.Helpers;
 using SpectrumAnalyzer.Models;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -15,21 +17,30 @@ namespace SpectrumAnalyzer.ViewModels
     public class MainViewModel : Screen
     {
         public Plotter Plotter { get; set; } = new Plotter();
+
         public BindableCollection<ListBoxFileItem> Files { get; set; } = new BindableCollection<ListBoxFileItem>();
+
         public BindableCollection<Spectrum> Transitions { get; set; } = new BindableCollection<Spectrum>();
+
+        public ListBoxFileItem SelectedFile { get; set; }
 
         public void Files_SelectionChanged(SelectionChangedEventArgs args)
         {
             Transitions.Clear();
             Plotter.Clear();
 
-            ListBoxFileItem selectedFile = args.AddedItems.Cast<ListBoxFileItem>().First();
-            string contents = ReadFromFile(selectedFile.Path);
+            if (args.AddedItems.Count == 0 || args.AddedItems.Cast<object>().Where(x => x is ListBoxFileItem).Count() != 1)
+            {
+                return;
+            }
+
+            SelectedFile = args.AddedItems.Cast<ListBoxFileItem>().FirstOrDefault();
+            string contents = ReadFromFile(SelectedFile.Path);
 
             if (!string.IsNullOrEmpty(contents))
             {
                 var originalSpectrum = new Spectrum(contents, "Original");
-                originalSpectrum.FileName = selectedFile.Name;
+                originalSpectrum.FileName = SelectedFile.Name;
                 Plotter.Plot(originalSpectrum, null);
                 Transitions.Add(originalSpectrum);
                 // var quantized = originalSpectrum.GetQuantized();
@@ -39,7 +50,9 @@ namespace SpectrumAnalyzer.ViewModels
                 Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked);
                 foreach (var item in searched.PeakX)
                 {
+                    Plotter.Selection = Plotter.StageType.Automatic;
                     Plotter.MarkPeak(item.X, item.Y);
+                    Plotter.Selection = Plotter.StageType.CanBeManual;
                 }
             }
         }
