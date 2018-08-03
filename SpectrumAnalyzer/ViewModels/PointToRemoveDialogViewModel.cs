@@ -1,11 +1,8 @@
 ﻿using Caliburn.Micro;
 using OxyPlot.Series;
 using SpectrumAnalyzer.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.UI.WebControls;
 using System.Windows.Controls;
 
