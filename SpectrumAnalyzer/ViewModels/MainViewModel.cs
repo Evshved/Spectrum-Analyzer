@@ -93,7 +93,7 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void SaveSpectrum()
         {
-
+            throw new NotImplementedException();
         }
 
         public void DetectPeaks()
@@ -115,14 +115,20 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void AddToDatabase(object parameter)
         {
-            var title = Plotter.PlotFrame.Title;
-            var series = Plotter.PlotFrame.Series[0] as LineSeries;
-            string data = string.Empty;
-            foreach (DataPoint point in series.Points)
+            IWindowManager manager = new WindowManager();
+            var vm = new AddToDatabaseDialogViewModel(Plotter.PlotFrame.Title);
+            var result = manager.ShowDialog(vm, null, null);
+            if (result == true)
             {
-                data += string.Format("({0};{1})", point.X, point.Y);
+                SpectrumBase spectrumBase = new SpectrumBase()
+                {
+                    Name = vm.SpectrumName,
+                    Data = string.Join(";", Transitions.First(x => x.Name == "Searched").Bins.Select(x => x.X + ":" + x.Y).ToArray()),
+                    Peaks = string.Join(";", (Plotter.PlotFrame.Series.First(x => x.TrackerKey == "peaks") as ScatterSeries).Points.Select(x => x.X + ":" + x.Y).ToArray())
+                };
+
+                Database.GetConnection().Insert(spectrumBase);            
             }
-            Database.Put(new SpectrumBase() { Peaks = data, Name = title });
         }
 
         public void OpenDatabaseView()

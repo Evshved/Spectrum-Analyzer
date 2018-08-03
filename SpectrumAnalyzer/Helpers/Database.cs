@@ -16,20 +16,5 @@ namespace SpectrumAnalyzer.Models
             }
             return localDbConnection;
         }
-
-        public static void Put(SpectrumBase spec)
-        {
-            GetConnection().Insert(spec);
-        }
-
-        public static SpectrumBase Get(string title)
-        {
-            var spec = GetConnection().Table<SpectrumBase>().FirstOrDefault();
-            return spec;
-        }
-
-        public static void Delete(string table, string title)
-        {
-        }
     }
 }

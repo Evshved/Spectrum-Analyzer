@@ -7,17 +7,24 @@
         xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
         xmlns:local="clr-namespace:SpectrumAnalyzer.Views"
         mc:Ignorable="d"
-        Title="Database" Height="450" Width="800">
+        Title="Database" MinHeight="250" Height="250" MinWidth="400" Width="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Button Grid.Row="0" Style="{StaticResource HorizontalTextButton}" x:Name="DeleteSpectrums" Content="{StaticResource str_btn_DeleteFromDatabase}" Width="140" />
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="5,5,5,5" IsEnabled="False" Text="Search" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <Button Grid.Column="1" Margin="5,5,5,5" Style="{StaticResource HorizontalTextButton}" x:Name="DeleteSpectrums" Content="{StaticResource str_btn_DeleteFromDatabase}" Width="140" />
+        </Grid>
         <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Extended" SelectionUnit="FullRow" x:Name="Spectrums" ItemsSource="{Binding Spectrums}" cal:Message.Attach="[Event SelectionChanged] = [Spectrums_SelectionChanged($eventArgs)]">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Binding="{Binding Path=ID}" />
-                <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Path=TITLE}" />
+                <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}" />
+                <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=Name}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

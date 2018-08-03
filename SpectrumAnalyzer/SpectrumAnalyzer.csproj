@@ -118,9 +118,13 @@
     <Compile Include="Models\Spectrum.cs" />
     <Compile Include="Helpers\ListBoxFileItem.cs" />
     <Compile Include="Models\Plotter.cs" />
+    <Compile Include="ViewModels\AddToDatabaseDialogViewModel.cs" />
     <Compile Include="ViewModels\DatabaseViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PointToRemoveDialogViewModel.cs" />
+    <Compile Include="Views\AddToDatabaseDialogView.xaml.cs">
+      <DependentUpon>AddToDatabaseDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PointToRemoveDialogView.xaml.cs">
       <DependentUpon>PointToRemoveDialogView.xaml</DependentUpon>
     </Compile>
@@ -128,6 +132,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Page Include="Resources\Localization_en.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AddToDatabaseDialogView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

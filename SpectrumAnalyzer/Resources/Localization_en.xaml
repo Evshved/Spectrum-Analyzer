@@ -21,4 +21,10 @@
     <system:String x:Key="str_PeakDialog_WindowTitle">Choose a peak to remove:</system:String>
     <system:String x:Key="str_btn_OK">OK</system:String>
     <system:String x:Key="str_btn_Cancel">Cancel</system:String>
+
+    <system:String x:Key="str_AddToDatabaseDialog_WindowTitle">Add to Database</system:String>
+    <system:String x:Key="str_lbl_AddToDatabaseDialog_Name">Name</system:String>
+    <system:String x:Key="str_lbl_AddToDatabaseDialog_Substance">Substance</system:String>
+    <system:String x:Key="str_btn_AddToDatabaseDialog_OK">OK</system:String>
+    <system:String x:Key="str_btn_AddToDatabaseDialog_Cancel">Cancel</system:String>
 </ResourceDictionary>
