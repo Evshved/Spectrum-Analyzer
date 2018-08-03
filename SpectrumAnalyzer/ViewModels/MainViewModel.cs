@@ -56,7 +56,7 @@ namespace SpectrumAnalyzer.ViewModels
         {
             get
             {
-                return Transitions.Any(x => x.Name == "Original" || x.Name == "Searched") ? true : false;
+                return Transitions.Any(x => x.Name == "Searched") ? true : false;
             }
         }
 
@@ -92,7 +92,7 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void SaveSpectrum()
         {
-            throw new NotImplementedException();
+            SaveSearchedSpectrum();
         }
 
         public void DetectPeaks()
@@ -126,7 +126,7 @@ namespace SpectrumAnalyzer.ViewModels
                     Peaks = string.Join(";", (Plotter.PlotFrame.Series.First(x => x.TrackerKey == "peaks") as ScatterSeries).Points.Select(x => x.X + ":" + x.Y).ToArray())
                 };
 
-                Database.GetConnection().Insert(spectrumBase);            
+                Database.GetConnection().Insert(spectrumBase);
             }
         }
 
@@ -151,6 +151,23 @@ namespace SpectrumAnalyzer.ViewModels
             }
         }
         #endregion
+
+        private void SaveSearchedSpectrum()
+        {
+            var spectrum = Transitions.First(x => x.Name == "Searched");
+            var contents = "X,Y" + Environment.NewLine;
+            contents += string.Join(Environment.NewLine, spectrum.Bins.Select(x => x.X + "," + x.Y).ToArray());
+
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.FileName = spectrum.FileName;
+            dlg.DefaultExt = ".txt";
+            dlg.Filter = "Text file (*.txt)|*.txt|Comma Separated (*.csv)|*.csv";
+
+            if (dlg.ShowDialog() == true)
+            {
+                IO.SaveTextFile(dlg.FileName, contents, Dispatcher.CurrentDispatcher);
+            }
+        }
 
         public void ProcessFile(string contents)
         {
