@@ -60,37 +60,57 @@ namespace SpectrumAnalyzer.Models
 
             PlotFrame.Title = spectrum.FileName;
 
-            var series1 = new LineSeries
-            {
-                StrokeThickness = 1,
-                Color = this.GetColor(),
-                TrackerKey = spectrum.Name.ToLower(),
-                Title = spectrum.Name
-            };
+            var series = BuildSeries(spectrum);
 
-            series1.Points.AddRange(spectrum.Bins.Select(x => (DataPoint)x));
+            series.Points.AddRange(spectrum.Bins.Select(x => (DataPoint)x));
 
             if (onSeriesClicked != null)
             {
-                series1.MouseDown += (s, e) => { onSeriesClicked(s, e); };
+                series.MouseDown += (s, e) => { onSeriesClicked(s, e); };
             }
 
-            PlotFrame.Series.Add(series1);
+            PlotFrame.Series.Add(series);
             RecountPlotAxes(spectrum);
             PlotFrame.InvalidatePlot(true);
         }
 
-        private OxyColor GetColor()
+        private LineSeries BuildSeries(Spectrum spectrum)
         {
-            var colors = new List<OxyColor> {
-                OxyColors.Red,
-                OxyColors.DarkBlue,
-                OxyColors.DarkGreen,
-                OxyColors.Orange,
-                OxyColors.DarkGray
+            var series = new LineSeries()
+            {
+                StrokeThickness = 1,
+                Title = spectrum.Name,
+                TrackerKey = spectrum.Name.ToLower()
             };
 
-            return colors[this.PlotFrame.Series.Count(serie => serie.TrackerKey != "peaks")];
+            switch (spectrum.Name)
+            {
+                case "Original":
+                    {
+                        series.Color = OxyColors.Red;
+                        series.MarkerType = MarkerType.Circle;
+                        series.MarkerSize = 2;
+                        series.MarkerFill = OxyColors.Red;
+                        series.MarkerResolution = 50;
+                        break;
+                    }
+                case "Searched":
+                    {
+                        series.Color = OxyColors.Blue;
+                        series.MarkerType = MarkerType.Square;
+                        series.MarkerSize = 2;
+                        series.MarkerFill = OxyColors.Blue;
+                        series.MarkerResolution = 50;
+                        break;
+                    }
+                default:
+                    {
+                        series.Color = OxyColors.Yellow;
+                        break;
+                    }
+            }
+
+            return series;
         }
 
         public void RemoveSeries(string key)
