@@ -12,6 +12,8 @@ namespace SpectrumAnalyzer.ViewModels
 
         public List<SpectrumBase> SelectedSpectrums { get; set; } = new List<SpectrumBase>();
 
+        public List<SpectrumBase> PreparedForImport { get; set; } = new List<SpectrumBase>();
+
         public DatabaseViewModel()
         {
             LoadAllData();
@@ -34,8 +36,21 @@ namespace SpectrumAnalyzer.ViewModels
             {
                 Database.GetConnection().Delete(selectedSpectrum);
                 SelectedSpectrums.Remove(selectedSpectrum);
+                PreparedForImport.Remove(selectedSpectrum);
                 Spectrums.Remove(selectedSpectrum);
             }
+        }
+
+        public void ImportToWorkspace()
+        {
+            PreparedForImport.AddRange(SelectedSpectrums);
+            SelectedSpectrums.Clear();
+            NotifyOfPropertyChange(() => CanImportToWorkspace);
+        }
+
+        public bool CanImportToWorkspace
+        {
+            get { return SelectedSpectrums.Count > 0 ? true : false; }
         }
 
         public bool CanDeleteSpectrums
@@ -48,6 +63,7 @@ namespace SpectrumAnalyzer.ViewModels
             SelectedSpectrums.AddRange(args.AddedItems.Cast<object>().Where(x => x is SpectrumBase).Cast<SpectrumBase>());
             args.RemovedItems.Cast<object>().Where(x => x is SpectrumBase).Cast<SpectrumBase>().ToList().ForEach(x => SelectedSpectrums.Remove(x));
             NotifyOfPropertyChange(() => CanDeleteSpectrums);
+            NotifyOfPropertyChange(() => CanImportToWorkspace);
         }
     }
 }

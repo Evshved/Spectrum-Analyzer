@@ -17,5 +17,10 @@ namespace SpectrumAnalyzer.Models
 
         [Indexed]
         public int? SubstanceId { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

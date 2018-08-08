@@ -22,6 +22,8 @@ namespace SpectrumAnalyzer.ViewModels
 
         public BindableCollection<Spectrum> Transitions { get; set; } = new BindableCollection<Spectrum>();
 
+        public BindableCollection<SpectrumBase> ImportedFromDatabase { get; set; } = new BindableCollection<SpectrumBase>();
+
         public ListBoxFileItem SelectedFile { get; set; }
 
         public void Files_SelectionChanged(SelectionChangedEventArgs args)
@@ -34,6 +36,7 @@ namespace SpectrumAnalyzer.ViewModels
                 : null;
 
             NotifyOfPropertyChange(() => CanDetectPeaks);
+            NotifyOfPropertyChange(() => CanAddToDatabase);
         }
 
         #region Triggers
@@ -68,6 +71,14 @@ namespace SpectrumAnalyzer.ViewModels
                 return SelectedFile == null ? false : true;
             }
         }
+
+        public bool CanClearImportedSpectrums
+        {
+            get
+            {
+                return ImportedFromDatabase.Count > 0 ? true : false;
+            }
+        }
         #endregion
 
         #region Actions
@@ -94,6 +105,12 @@ namespace SpectrumAnalyzer.ViewModels
         public void SaveSpectrum()
         {
             SaveSearchedSpectrum();
+        }
+
+        public void ClearImportedSpectrums()
+        {
+            ImportedFromDatabase.Clear();
+            NotifyOfPropertyChange(() => CanClearImportedSpectrums);
         }
 
         public void DetectPeaks()
@@ -134,7 +151,13 @@ namespace SpectrumAnalyzer.ViewModels
         public void OpenDatabaseView()
         {
             IWindowManager manager = new WindowManager();
-            manager.ShowWindow(new DatabaseViewModel(), null, null);
+            var vm = new DatabaseViewModel();
+            manager.ShowDialog(vm, null, null);
+            if (vm.PreparedForImport != null && vm.PreparedForImport.Count > 0)
+            {
+                ImportedFromDatabase.AddRange(vm.PreparedForImport);
+            }
+            NotifyOfPropertyChange(() => CanClearImportedSpectrums);
         }
 
         public void SaveImage(object parameter)
