@@ -109,6 +109,7 @@
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Helpers\ListBoxScatterPointItem.cs" />
+    <Compile Include="Helpers\SpectrumType.cs" />
     <Compile Include="Models\Bin.cs" />
     <Compile Include="Helpers\IO.cs" />
     <Compile Include="Helpers\WindowSizeConverter.cs" />

@@ -78,7 +78,7 @@
                     </Grid.RowDefinitions>
 
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="0" Content="{StaticResource str_lbl_Search}" />
-                    <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1" ItemsSource="{Binding ImportedFromDatabase}" x:Name="ImportedFromDatabase" />
+                    <ListBox Style="{StaticResource SearchListbox}" Grid.Row="1" ItemsSource="{Binding ImportedFromDatabase}" x:Name="ImportedFromDatabase" cal:Message.Attach="[Event SelectionChanged] = [ImportedSpectrums_SelectionChanged($eventArgs)]" />
                     <Button Style="{StaticResource HorizontalTextButton}" HorizontalAlignment="Stretch" Grid.Row="2" Content="{StaticResource str_btn_ClearImportedSpectrums}" x:Name="ClearImportedSpectrums" />
                     <Label Style="{StaticResource WorkspaceLabel}" Grid.Row="3" Content="{StaticResource str_lbl_Transitions}" />
                     <ListView ItemsSource="{Binding Transitions}" Style="{StaticResource TransitionsListView}" Grid.Row="4">

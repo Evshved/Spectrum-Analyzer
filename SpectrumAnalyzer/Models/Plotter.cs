@@ -52,16 +52,16 @@ namespace SpectrumAnalyzer.Models
             PlotFrame.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Maximum = 10, Minimum = 0 });
         }
 
-        public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onSeriesClicked)
+        public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onSeriesClicked, string trackerKey)
         {
             if (spectrum == null)
             {
                 return;
             }
 
-            PlotFrame.Title = spectrum.FileName;
+            PlotFrame.Title = spectrum.FileName ?? spectrum.Name;
 
-            var series = BuildSeries(spectrum);
+            var series = BuildSeries(spectrum, trackerKey);
 
             series.Points.AddRange(spectrum.Bins.Select(x => (DataPoint)x));
 
@@ -75,13 +75,13 @@ namespace SpectrumAnalyzer.Models
             PlotFrame.InvalidatePlot(true);
         }
 
-        private LineSeries BuildSeries(Spectrum spectrum)
+        private LineSeries BuildSeries(Spectrum spectrum, string trackerKey)
         {
             var series = new LineSeries()
             {
                 StrokeThickness = 1,
                 Title = spectrum.Name,
-                TrackerKey = spectrum.Name.ToLower()
+                TrackerKey = trackerKey ?? spectrum.Name.ToLower()
             };
 
             switch (spectrum.Name)
@@ -101,6 +101,15 @@ namespace SpectrumAnalyzer.Models
                         series.MarkerType = MarkerType.Square;
                         series.MarkerSize = 2;
                         series.MarkerFill = OxyColors.Blue;
+                        series.MarkerResolution = 50;
+                        break;
+                    }
+                case "Imported":
+                    {
+                        series.Color = OxyColors.Green;
+                        series.MarkerType = MarkerType.Triangle;
+                        series.MarkerSize = 3;
+                        series.MarkerFill = OxyColors.Green;
                         series.MarkerResolution = 50;
                         break;
                     }

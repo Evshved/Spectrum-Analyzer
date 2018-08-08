@@ -26,10 +26,13 @@ namespace SpectrumAnalyzer.ViewModels
 
         public ListBoxFileItem SelectedFile { get; set; }
 
+        public SpectrumBase SelectedImportedSpectrum { get; set; }
+
         public void Files_SelectionChanged(SelectionChangedEventArgs args)
         {
             Transitions.Clear();
             Plotter.Clear();
+            ImportedFromDatabase.Clear();
 
             SelectedFile = args.AddedItems.Cast<object>().Where(x => x is ListBoxFileItem).Count() == 1
                 ? args.AddedItems.Cast<ListBoxFileItem>().First()
@@ -37,6 +40,31 @@ namespace SpectrumAnalyzer.ViewModels
 
             NotifyOfPropertyChange(() => CanDetectPeaks);
             NotifyOfPropertyChange(() => CanAddToDatabase);
+        }
+
+        public void ImportedSpectrums_SelectionChanged(SelectionChangedEventArgs args)
+        {
+            var existingSeries = Plotter.PlotFrame.Series.Where(x => x.TrackerKey == "imported");
+            if (existingSeries != null && existingSeries.Any())
+            {
+                Plotter.PlotFrame.Series.Remove(existingSeries.First());
+            }
+
+            var existingTransition = Transitions.Where(x => x.Name.ToLower() == "imported");
+            if (existingTransition != null && existingTransition.Any())
+            {
+                Transitions.Remove(existingTransition.First());
+            }
+
+            SelectedImportedSpectrum = args.AddedItems.Cast<object>().Where(x => x is SpectrumBase).Count() == 1
+                ? args.AddedItems.Cast<SpectrumBase>().First()
+                : null;
+            if (SelectedImportedSpectrum != null)
+            {
+                Spectrum spectrum = new Spectrum(SelectedImportedSpectrum);
+                Plotter.Plot(spectrum, null, "imported");
+                Transitions.Add(spectrum);
+            }
         }
 
         #region Triggers
@@ -196,14 +224,14 @@ namespace SpectrumAnalyzer.ViewModels
         public void ProcessFile(string contents)
         {
             var originalSpectrum = new Spectrum(contents, "Original");
-            originalSpectrum.FileName = SelectedFile.Name;
-            Plotter.Plot(originalSpectrum, null);
+            originalSpectrum.FileName = Path.GetFileName(SelectedFile.Name);
+            Plotter.Plot(originalSpectrum, null, null);
             Transitions.Add(originalSpectrum);
             // var quantized = originalSpectrum.GetQuantized();
             // Transitions.Add(quantized);
             var searched = originalSpectrum.GetSearched();
             Transitions.Add(searched);
-            Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked);
+            Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked, null);
             foreach (var item in searched.PeakX)
             {
                 Plotter.Selection = Plotter.StageType.Automatic;

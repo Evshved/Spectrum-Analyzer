@@ -15,7 +15,7 @@ namespace SpectrumAnalyzer.Models
 
         public string FileName
         {
-            get { return _fileName.Split('.')[0]; }
+            get { return _fileName; }
             set { _fileName = value; }
         }
 
@@ -24,7 +24,7 @@ namespace SpectrumAnalyzer.Models
         public List<Bin> Bins;
 
         public List<Bin> PeakX;
-
+        private SpectrumBase selectedImportedSpectrum;
         public readonly float LeftBound = 250;
 
         public Spectrum(string contents, string fileName)
@@ -57,6 +57,19 @@ namespace SpectrumAnalyzer.Models
             this.Bins = new List<Bin>();
             this.Bins.AddRange(data);
             this.Name = name;
+            this.IsVisible = true;
+        }
+
+        public Spectrum(SpectrumBase selectedImportedSpectrum)
+        {
+            this.selectedImportedSpectrum = selectedImportedSpectrum;
+            var bins = selectedImportedSpectrum.Data.Split(';');
+            this.Bins = new List<Bin>();
+            foreach (var bin in bins)
+            {
+                this.Bins.Add(new Bin(bin.Split(':')[0], bin.Split(':')[1]));
+            }
+            this.Name = "Imported";
             this.IsVisible = true;
         }
 
