@@ -41,6 +41,7 @@ namespace SpectrumAnalyzer.Models
             {
                 PlotFrame.Title = string.Empty;
                 PlotFrame.Series.Clear();
+                PlotFrame.InvalidatePlot(true);
             }
         }
 
@@ -212,7 +213,8 @@ namespace SpectrumAnalyzer.Models
                 MarkerOutline = customMarker.ToArray(),
                 MarkerFill = OxyColors.DarkRed,
                 MarkerSize = 10,
-                TrackerKey = "peaks"
+                TrackerKey = "peaks",
+                Title = (string)Application.Current.Resources["str_plotter_PeakSeriesTitle"]
             };
 
             return s;
