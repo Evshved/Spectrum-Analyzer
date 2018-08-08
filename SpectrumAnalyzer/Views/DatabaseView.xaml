@@ -23,7 +23,7 @@
             <Button Grid.Column="1" Margin="5,5,5,5" Style="{StaticResource HorizontalTextButton}" x:Name="DeleteSpectrums" Content="{StaticResource str_btn_DeleteFromDatabase}" Width="100" />
             <Button Grid.Column="2" Margin="5,5,5,5" Style="{StaticResource HorizontalTextButton}" Content="{StaticResource str_btn_ImportToWorkspace}" Width="140" x:Name="ImportToWorkspace" />
         </Grid>
-        <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Extended" SelectionUnit="FullRow" x:Name="Spectrums" ItemsSource="{Binding Spectrums}" cal:Message.Attach="[Event SelectionChanged] = [Spectrums_SelectionChanged($eventArgs)]">
+        <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Extended" SelectionUnit="FullRow" x:Name="Spectrums" ItemsSource="{Binding Spectrums}" cal:Message.Attach="[Event SelectionChanged] = [Spectrums_SelectionChanged($eventArgs)]">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}" />
                 <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=Name}" />
