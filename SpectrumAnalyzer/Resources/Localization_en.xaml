@@ -17,6 +17,7 @@
 
     <system:String x:Key="str_plotter_xaxis">Δν, cm⁻¹</system:String>
     <system:String x:Key="str_plotter_yaxis">Intensity, units</system:String>
+    <system:String x:Key="str_plotter_PeakSeriesTitle">Peaks</system:String>
 
     <system:String x:Key="str_PeakDialog_WindowTitle">Choose a peak to remove:</system:String>
     <system:String x:Key="str_btn_OK">OK</system:String>

@@ -213,6 +213,7 @@ namespace SpectrumAnalyzer.Models
                 MarkerOutline = customMarker.ToArray(),
                 MarkerFill = OxyColors.DarkRed,
                 MarkerSize = 10,
+                RenderInLegend = false,
                 TrackerKey = "peaks",
                 Title = (string)Application.Current.Resources["str_plotter_PeakSeriesTitle"]
             };

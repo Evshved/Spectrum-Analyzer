@@ -5,6 +5,7 @@ using OxyPlot.Series;
 using SpectrumAnalyzer.Helpers;
 using SpectrumAnalyzer.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -186,28 +187,16 @@ namespace SpectrumAnalyzer.ViewModels
                 Plotter.MarkPeak(item.X, item.Y);
                 Plotter.Selection = Plotter.StageType.CanBeManual;
             }
+            Transitions.Add(new Spectrum(new List<Bin>(), "Peaks")); // Empty Spectrum : the main reason of this is to display a 'Peaks' checkbox in Transitions list
+            NotifyOfPropertyChange(() => Transitions);
         }
 
         public void TransitionCheckBoxChanged(object sender, RoutedEventArgs args)
         {
             CheckBox checkBox = sender as CheckBox;
-            var transitionName = checkBox.Content.ToString();
-            if (checkBox.IsChecked == true)
-            {
-                var existingSeries = Plotter.GetExistingSeries(transitionName.ToLower());
-                if (existingSeries == null)
-                {
-                    Plotter.Plot(Transitions.First(t => t.Name == transitionName), null);
-                }
-            }
-            else if (checkBox.IsChecked == false)
-            {
-                var existingSeries = Plotter.GetExistingSeries(transitionName.ToLower());
-                if (existingSeries != null)
-                {
-                    Plotter.RemoveSeries(transitionName);
-                }
-            }
+            var seriesName = checkBox.Content.ToString();
+            Plotter.GetExistingSeries(seriesName.ToLower()).IsVisible = checkBox.IsChecked ?? false;
+            Plotter.PlotFrame.InvalidatePlot(false);
         }
 
         private void AddToQueue(string[] fileNames)
