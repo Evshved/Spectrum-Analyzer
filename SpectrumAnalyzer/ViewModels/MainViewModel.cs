@@ -20,7 +20,10 @@ namespace SpectrumAnalyzer.ViewModels
 
         public BindableCollection<ListBoxFileItem> Files { get; set; } = new BindableCollection<ListBoxFileItem>();
 
-        public BindableCollection<Spectrum> Transitions { get; set; } = new BindableCollection<Spectrum>();
+        public BindableCollection<ListViewTransitionItem> Transitions { get; set; } = new BindableCollection<ListViewTransitionItem>();
+
+        public Spectrum AnalyzingSpectrum { get; set; }
+        public Spectrum ImportedSpectrum { get; set; }
 
         public BindableCollection<SpectrumBase> ImportedFromDatabase { get; set; } = new BindableCollection<SpectrumBase>();
 
@@ -44,13 +47,25 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void ImportedSpectrums_SelectionChanged(SelectionChangedEventArgs args)
         {
-            var existingSeries = Plotter.PlotFrame.Series.Where(x => x.TrackerKey == "imported");
-            if (existingSeries != null && existingSeries.Any())
+            var existingSeries = Plotter.GetExistingSeries("Imported");
+            if (existingSeries != null)
             {
-                Plotter.PlotFrame.Series.Remove(existingSeries.First());
+                Plotter.PlotFrame.Series.Remove(existingSeries);
             }
 
-            var existingTransition = Transitions.Where(x => x.Name.ToLower() == "imported");
+            var existingTransition = Transitions.Where(x => x.Name == "Imported");
+            if (existingTransition != null && existingTransition.Any())
+            {
+                Transitions.Remove(existingTransition.First());
+            }
+
+            existingSeries = Plotter.GetExistingSeries("Imported Peaks");
+            if (existingSeries != null)
+            {
+                Plotter.PlotFrame.Series.Remove(existingSeries);
+            }
+
+            existingTransition = Transitions.Where(x => x.Name == "Imported Peaks");
             if (existingTransition != null && existingTransition.Any())
             {
                 Transitions.Remove(existingTransition.First());
@@ -62,8 +77,9 @@ namespace SpectrumAnalyzer.ViewModels
             if (SelectedImportedSpectrum != null)
             {
                 Spectrum spectrum = new Spectrum(SelectedImportedSpectrum);
-                Plotter.Plot(spectrum, null, "imported");
-                Transitions.Add(spectrum);
+                Plotter.Plot(spectrum, null, SpectrumType.Imported);
+                Transitions.Add(new ListViewTransitionItem() { Name = spectrum.Optimized.Name });
+                Transitions.Add(new ListViewTransitionItem() { Name = spectrum.Peaks.Name });
             }
         }
 
@@ -168,8 +184,8 @@ namespace SpectrumAnalyzer.ViewModels
                 SpectrumBase spectrumBase = new SpectrumBase()
                 {
                     Name = vm.SpectrumName,
-                    Data = string.Join(";", Transitions.First(x => x.Name == "Searched").Bins.Select(x => x.X + ":" + x.Y).ToArray()),
-                    Peaks = string.Join(";", (Plotter.PlotFrame.Series.First(x => x.TrackerKey == "peaks") as ScatterSeries).Points.Select(x => x.X + ":" + x.Y).ToArray())
+                    Data = string.Join(";", AnalyzingSpectrum.Optimized.Data.Select(x => x.X + ":" + x.Y).ToArray()),
+                    Peaks = string.Join(";", (Plotter.GetExistingSeries("Peaks") as ScatterSeries).Points.Select(x => x.X + ":" + x.Y).ToArray())
                 };
 
                 Database.GetConnection().Insert(spectrumBase);
@@ -206,12 +222,11 @@ namespace SpectrumAnalyzer.ViewModels
 
         private void SaveSearchedSpectrum()
         {
-            var spectrum = Transitions.First(x => x.Name == "Searched");
             var contents = "X,Y" + Environment.NewLine;
-            contents += string.Join(Environment.NewLine, spectrum.Bins.Select(x => x.X + "," + x.Y).ToArray());
+            contents += string.Join(Environment.NewLine, AnalyzingSpectrum.Optimized.Data.Select(x => x.X + "," + x.Y).ToArray());
 
             SaveFileDialog dlg = new SaveFileDialog();
-            dlg.FileName = spectrum.FileName;
+            dlg.FileName = AnalyzingSpectrum.Name;
             dlg.DefaultExt = ".txt";
             dlg.Filter = "Text file (*.txt)|*.txt|Comma Separated (*.csv)|*.csv";
 
@@ -223,30 +238,31 @@ namespace SpectrumAnalyzer.ViewModels
 
         public void ProcessFile(string contents)
         {
-            var originalSpectrum = new Spectrum(contents, "Original");
-            originalSpectrum.FileName = Path.GetFileName(SelectedFile.Name);
-            Plotter.Plot(originalSpectrum, null, null);
-            Transitions.Add(originalSpectrum);
-            // var quantized = originalSpectrum.GetQuantized();
-            // Transitions.Add(quantized);
-            var searched = originalSpectrum.GetSearched();
-            Transitions.Add(searched);
-            Plotter.Plot(Transitions.FirstOrDefault(t => t.Name == "Searched"), OnSeriesClicked, null);
-            foreach (var item in searched.PeakX)
+            var source = SpectrumTransition.ParseFromString(contents, "Source");
+            var optimized = Spectrum.GetOptimized(source);
+            var peaks = Spectrum.GetPeaks(source);
+
+            AnalyzingSpectrum = new Spectrum()
             {
-                Plotter.Selection = Plotter.StageType.Automatic;
-                Plotter.MarkPeak(item.X, item.Y);
-                Plotter.Selection = Plotter.StageType.CanBeManual;
-            }
-            Transitions.Add(new Spectrum(new List<Bin>(), "Peaks")); // Empty Spectrum : the main reason of this is to display a 'Peaks' checkbox in Transitions list
-            NotifyOfPropertyChange(() => Transitions);
+                Source = source,
+                Optimized = optimized,
+                Peaks = peaks,
+                Type = SpectrumType.Analyzed,
+                Name = Path.GetFileName(SelectedFile.Name)
+            };
+
+            Plotter.Plot(AnalyzingSpectrum, OnSeriesClicked, SpectrumType.Analyzed);
+
+            Transitions.Add(new ListViewTransitionItem { Name = AnalyzingSpectrum.Source.Name });
+            Transitions.Add(new ListViewTransitionItem { Name = AnalyzingSpectrum.Optimized.Name });
+            Transitions.Add(new ListViewTransitionItem { Name = AnalyzingSpectrum.Peaks.Name });
         }
 
         public void TransitionCheckBoxChanged(object sender, RoutedEventArgs args)
         {
             CheckBox checkBox = sender as CheckBox;
             var seriesName = checkBox.Content.ToString();
-            Plotter.GetExistingSeries(seriesName.ToLower()).IsVisible = checkBox.IsChecked ?? false;
+            Plotter.GetExistingSeries(seriesName).IsVisible = checkBox.IsChecked ?? false;
             Plotter.PlotFrame.InvalidatePlot(false);
         }
 
@@ -269,7 +285,7 @@ namespace SpectrumAnalyzer.ViewModels
             var series = s as LineSeries;
             var x = series.InverseTransform(e.Position).X;
             var y = series.InverseTransform(e.Position).Y;
-            Plotter.MarkPeak(x, y);
+            Plotter.MarkPeak(x, y, "Peaks");
         }
 
         private string ReadFromFile(string filePath)

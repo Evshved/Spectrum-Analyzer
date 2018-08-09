@@ -8,118 +8,48 @@ namespace SpectrumAnalyzer.Models
 {
     public class Spectrum
     {
-        private string[] _contents;
-        private string _fileName;
-
         public string Name { get; set; }
+        public SpectrumType Type { get; set; }
 
-        public string FileName
-        {
-            get { return _fileName; }
-            set { _fileName = value; }
-        }
+        public List<Bin> Bins { get; set; }
 
-        public bool IsVisible { get; set; }
-
-        public List<Bin> Bins;
+        public SpectrumTransition Source { get; set; }
+        public SpectrumTransition Optimized { get; set; }
+        public SpectrumTransition Peaks { get; set; }
 
         public List<Bin> PeakX;
-        private SpectrumBase selectedImportedSpectrum;
         public readonly float LeftBound = 250;
-
-        public Spectrum(string contents, string fileName)
-        {
-            _contents = contents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            if (_contents.Length > 2)
-            {
-                Bins = new List<Bin>();
-
-                for (int i = 0; i < _contents.Length; i++)
-                {
-                    var str = _contents[i];
-                    if (Settings.IgnoredPhrases.Any(str.Contains))
-                    {
-                        continue;
-                    }
-                    var bin = ParseBin(str);
-                    if (bin.X > LeftBound)
-                    {
-                        Bins.Add(bin);
-                    }
-                }
-            }
-            Name = fileName;
-            IsVisible = true;
-        }
 
         public Spectrum(List<Bin> data, string name)
         {
             this.Bins = new List<Bin>();
             this.Bins.AddRange(data);
             this.Name = name;
-            this.IsVisible = true;
         }
 
-        public Spectrum(SpectrumBase selectedImportedSpectrum)
+        public Spectrum(SpectrumBase spectrumBase)
         {
-            this.selectedImportedSpectrum = selectedImportedSpectrum;
-            var bins = selectedImportedSpectrum.Data.Split(';');
-            this.Bins = new List<Bin>();
-            foreach (var bin in bins)
+            this.Name = spectrumBase.Name;
+            this.Type = SpectrumType.Imported;
+            this.Optimized = new SpectrumTransition
             {
-                this.Bins.Add(new Bin(bin.Split(':')[0], bin.Split(':')[1]));
-            }
-            this.Name = "Imported";
-            this.IsVisible = true;
+                Name = "Imported",
+                Data = Database.ParseSpectrum(spectrumBase.Data)
+            };
+            this.Peaks = new SpectrumTransition
+            {
+                Name = "Imported Peaks",
+                Data = Database.ParseSpectrum(spectrumBase.Peaks)
+            };
+        }
+
+        public Spectrum()
+        {
         }
 
         public override string ToString()
         {
             return this.Name;
-        }
-
-        private Bin ParseBin(string str)
-        {
-            string result = string.Empty;
-
-            for (int i = 0; i < str.Length; i++)
-            {
-                if (Char.IsDigit(str[i]) || str[i] == '.' || str[i] == ',' || str[i] == '-')
-                {
-                    result += str[i];
-                }
-                else
-                {
-                    result += ";";
-                }
-            }
-            string[] splitted = result.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            return new Bin(splitted[0], splitted[1]);
-        }
-
-        public Spectrum GetQuantized()
-        {
-            var result = new List<Bin>();
-            var increment = CalculateIncrement() * Settings.Precision;
-
-            result.Add(Bins[0]);
-
-            foreach (var bin in Bins.Skip(1))
-            {
-                var previous = result.Last();
-                var curX = previous.X + increment;
-                while (curX < bin.X)
-                {
-                    var a = curX - previous.X;
-                    var b = bin.X - curX;
-                    var c = bin.Y - previous.Y;
-                    var curY = a * c / (a + b) + previous.Y;
-                    result.Add(new Bin(curX, curY));
-                    previous = result.Last();
-                    curX = previous.X + increment;
-                }
-            }
-            return new Spectrum(result, "Quantized") { FileName = this.FileName };
         }
 
         public List<Bin> GetSmoothed()
@@ -132,43 +62,24 @@ namespace SpectrumAnalyzer.Models
             throw new NotImplementedException();
         }
 
-        public Spectrum GetSearched()
+        public static SpectrumTransition GetPeaks(SpectrumTransition source)
         {
-            int Iterations = 3;
-            int AverageWindow = 3;
-
-            double sigma = 2;
-            double threshold = 0.05 * 100;
-            int maxPeaks = 100;
-
-            bool backgroundRemove = true;
-            bool markov = true;
-
-            List<string> totalPeaks = new List<string>();
-
-            int size = this.Bins.Count;
-
-            double[] dataX = new double[] { };
-            Array.Resize(ref dataX, size);
-            this.ToXArray().CopyTo(dataX, 0);
-
-            double[] dataY = new double[] { };
-            Array.Resize(ref dataY, size);
-            this.ToYArray().CopyTo(dataY, 0);
+            SpectrumSearchSettings settings = new SpectrumSearchSettings();
 
             double[] resultDataY;
             double[] peakX;
-
-            int peaksNumber = _search(dataY, out resultDataY, out peakX, size, Iterations, AverageWindow, sigma, threshold, maxPeaks, backgroundRemove, markov);
+            _search(source.GetDataYArray(), out resultDataY, out peakX, source.Data.Count, settings);
 
             List<Bin> resultDataYList = new List<Bin>();
 
-            for (int i = 0; i < this.Bins.Count; i++)
+            for (int i = 0; i < source.Data.Count; i++)
             {
-                resultDataYList.Add(new Bin(this.Bins[i].X, (float)resultDataY[i]));
+                resultDataYList.Add(new Bin(source.Data[i].X, (float)resultDataY[i]));
             }
 
-            PeakX = new List<Bin>();
+            var result = new SpectrumTransition();
+            result.Name = "Peaks";
+
             for (int i = 0; i < peakX.Length; i++)
             {
                 if (peakX[i] == 0)
@@ -177,13 +88,13 @@ namespace SpectrumAnalyzer.Models
                 }
 
                 var nearestBin = GetNearestBin(peakX[i], resultDataYList);
-                PeakX.Add(nearestBin);
+                result.Data.Add(nearestBin);
             }
 
-            return new Spectrum(resultDataYList, "Searched") { FileName = this.FileName, PeakX = this.PeakX };
+            return result;
         }
 
-        private Bin GetNearestBin(double peakX, List<Bin> resultDataYList)
+        private static Bin GetNearestBin(double peakX, List<Bin> resultDataYList)
         {
             var ceil = (int)Math.Ceiling(peakX);
             var floor = (int)Math.Floor(peakX);
@@ -236,16 +147,17 @@ namespace SpectrumAnalyzer.Models
             return result.ToArray();
         }
 
-        private int _search(double[] dataY, out double[] resultDataY, out double[] peakX, int size, int deconIterations, int averageWindow, double sigma, double threshold, int maxPeaks, bool backgroundRemove, bool markov)
+        private static int _search(double[] dataY, out double[] resultDataY, out double[] peakX, int size, SpectrumSearchSettings settings)
         {
-            peakX = new double[maxPeaks];
+            // int deconIterations, int averageWindow, double sigma, double threshold, int maxPeaks, bool backgroundRemove, bool markov
+            peakX = new double[settings.MaxPeaks];
             int fNPeaks = 0;
             int PEAK_WINDOW = 1024;
 
             double[] _source = dataY;
             resultDataY = new double[size];
 
-            int i, j, numberIterations = (int)(7 * sigma + 0.5);
+            int i, j, numberIterations = (int)(7 * settings.Sigma + 0.5);
             double a, b, c;
             int k, lindex, posit, imin, imax, jmin, jmax, lh_gold, priz;
             double lda, ldb, ldc, area, maximum, maximum_decon;
@@ -254,35 +166,35 @@ namespace SpectrumAnalyzer.Models
             double nom, nip, nim, sp, sm, plocha = 0;
             double m0low = 0, m1low = 0, m2low = 0, l0low = 0, l1low = 0, detlow, av, men;
 
-            if (sigma < 1)
+            if (settings.Sigma < 1)
             {
                 // Console.WriteLine("SearchHighRes", "Invalid sigma, must be greater than or equal to 1");
                 return 0;
             }
 
-            if (threshold <= 0 || threshold >= 100)
+            if (settings.Threshold <= 0 || settings.Threshold >= 100)
             {
                 // Console.WriteLine("SearchHighRes", "Invalid threshold, must be positive and less than 100");
                 return 0;
             }
 
-            j = (int)(5.0 * sigma + 0.5);
+            j = (int)(5.0 * settings.Sigma + 0.5);
             if (j >= PEAK_WINDOW / 2)
             {
                 Console.WriteLine("Too large sigma");
                 return 0;
             }
 
-            if (markov == true)
+            if (settings.Markov == true)
             {
-                if (averageWindow <= 0)
+                if (settings.AverageWindow <= 0)
                 {
                     Console.WriteLine("Averaging window must be positive");
                     return 0;
                 }
             }
 
-            if (backgroundRemove == true)
+            if (settings.BackgroundRemove == true)
             {
                 if (size < 2 * numberIterations + 1)
                 {
@@ -291,7 +203,7 @@ namespace SpectrumAnalyzer.Models
                 }
             }
 
-            k = (int)(2 * sigma + 0.5);
+            k = (int)(2 * settings.Sigma + 0.5);
             if (k >= 2)
             {
                 for (i = 0; i < k; i++)
@@ -318,7 +230,7 @@ namespace SpectrumAnalyzer.Models
                 l1low = 0;
             }
 
-            i = (int)(7 * sigma + 0.5);
+            i = (int)(7 * settings.Sigma + 0.5);
             i = 2 * i;
             double[] working_space = new double[7 * (size + i)];
             for (j = 0; j < 7 * (size + i); j++) working_space[j] = 0;
@@ -345,13 +257,13 @@ namespace SpectrumAnalyzer.Models
             }
 
             // Background Remove ----------------------------
-            if (backgroundRemove == true)
+            if (settings.BackgroundRemove == true)
             {
                 for (i = 1; i <= numberIterations; i++)
                 {
                     for (j = i; j < size_ext - i; j++)
                     {
-                        if (markov == false)
+                        if (settings.Markov == false)
                         {
                             a = working_space[size_ext + j];
                             b = (working_space[size_ext + j - i] + working_space[size_ext + j + i]) / 2.0;
@@ -443,7 +355,7 @@ namespace SpectrumAnalyzer.Models
 
             // Markov smoothing ----------------------------
 
-            if (markov == true)
+            if (settings.Markov == true)
             {
                 for (j = 0; j < size_ext; j++)
                     working_space[2 * size_ext + j] = working_space[size_ext + j];
@@ -469,7 +381,7 @@ namespace SpectrumAnalyzer.Models
                     nim = working_space[2 * size_ext + i + 1] / maxch;
                     sp = 0;
                     sm = 0;
-                    for (l = 1; l <= averageWindow; l++)
+                    for (l = 1; l <= settings.AverageWindow; l++)
                     {
                         if ((i + l) > xmax)
                             a = working_space[2 * size_ext + xmax] / maxch;
@@ -518,7 +430,7 @@ namespace SpectrumAnalyzer.Models
                 {
                     working_space[2 * size_ext + j] = working_space[size_ext + j];
                 }
-                if (backgroundRemove == true)
+                if (settings.BackgroundRemove == true)
                 {
                     for (i = 1; i <= numberIterations; i++)
                     {
@@ -550,8 +462,8 @@ namespace SpectrumAnalyzer.Models
             //generate response vector
             for (i = 0; i < size_ext; i++)
             {
-                lda = (double)(i - 3 * sigma);
-                lda = lda * lda / (2 * sigma * sigma);
+                lda = (double)(i - 3 * settings.Sigma);
+                lda = lda * lda / (2 * settings.Sigma * settings.Sigma);
                 j = (int)(1000 * Math.Exp(-lda));
                 lda = j;
                 if (lda != 0)
@@ -620,7 +532,7 @@ namespace SpectrumAnalyzer.Models
             for (i = 0; i < size_ext; i++)
                 working_space[i] = 1;
             //START OF ITERATIONS
-            for (lindex = 0; lindex < deconIterations; lindex++)
+            for (lindex = 0; lindex < settings.DeconvolutionIterations; lindex++)
             {
                 for (i = 0; i < size_ext; i++)
                 {
@@ -686,8 +598,8 @@ namespace SpectrumAnalyzer.Models
                     working_space[i] = 0;
             }
             lda = 1;
-            if (lda > threshold)
-                lda = threshold;
+            if (lda > settings.Threshold)
+                lda = settings.Threshold;
             lda = lda / 100;
 
             // ----------------------------
@@ -699,7 +611,7 @@ namespace SpectrumAnalyzer.Models
                 {
                     if (i >= shift && i < size + shift)
                     {
-                        if (working_space[i] > lda * maximum_decon && working_space[6 * size_ext + i] > threshold * maximum / 100.0)
+                        if (working_space[i] > lda * maximum_decon && working_space[6 * size_ext + i] > settings.Threshold * maximum / 100.0)
                         {
                             for (j = i - 1, a = 0, b = 0; j <= i + 1; j++)
                             {
@@ -727,7 +639,7 @@ namespace SpectrumAnalyzer.Models
                                 }
                                 if (priz == 0)
                                 {
-                                    if (j < maxPeaks)
+                                    if (j < settings.MaxPeaks)
                                     {
                                         peakX[j] = a;
                                     }
@@ -737,14 +649,14 @@ namespace SpectrumAnalyzer.Models
                                 {
                                     for (k = peak_index; k >= j; k--)
                                     {
-                                        if (k < maxPeaks)
+                                        if (k < settings.MaxPeaks)
                                         {
                                             peakX[k] = peakX[k - 1];
                                         }
                                     }
                                     peakX[j - 1] = a;
                                 }
-                                if (peak_index < maxPeaks)
+                                if (peak_index < settings.MaxPeaks)
                                     peak_index += 1;
                             }
                         }
@@ -759,10 +671,29 @@ namespace SpectrumAnalyzer.Models
 
             fNPeaks = peak_index;
 
-            if (peak_index == maxPeaks)
+            if (peak_index == settings.MaxPeaks)
                 Console.WriteLine("Peak buffer full");
 
             return fNPeaks;
+        }
+
+        internal static SpectrumTransition GetOptimized(SpectrumTransition source)
+        {
+            var result = new SpectrumTransition();
+            result.Name = "Optimized";
+
+            SpectrumSearchSettings settings = new SpectrumSearchSettings();
+
+            double[] smoothedSpectrum;
+            double[] peakX;
+            Spectrum._search(source.GetDataYArray(), out smoothedSpectrum, out peakX, source.Data.Count, settings);
+
+            for (int i = 0; i < source.Data.Count; i++)
+            {
+                result.Data.Add(new Bin(source.Data[i].X, (float)smoothedSpectrum[i]));
+            }
+
+            return result;
         }
     }
 }

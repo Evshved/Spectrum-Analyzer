@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Windows;
 using Caliburn.Micro;
 using SpectrumAnalyzer.ViewModels;
+using SpectrumAnalyzer.Helpers;
 
 namespace SpectrumAnalyzer.Models
 {
@@ -52,41 +53,72 @@ namespace SpectrumAnalyzer.Models
             PlotFrame.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Maximum = 10, Minimum = 0 });
         }
 
-        public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onSeriesClicked, string trackerKey)
+        public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onSeriesClicked, SpectrumType spectrumType)
         {
-            if (spectrum == null)
+            LineSeries sourceSeries;
+            LineSeries optimizedSeries = BuildLineSeries(spectrum.Optimized);
+            var peakSeriesName = string.Empty;
+
+            if (spectrumType == SpectrumType.Analyzed)
             {
-                return;
+                PlotFrame.Title = spectrum.Name;
+                sourceSeries = BuildLineSeries(spectrum.Source);
+                PlotFrame.Series.Add(sourceSeries);
+                peakSeriesName = "Peaks";
+            }
+            else if (spectrumType == SpectrumType.Imported)
+            {
+                peakSeriesName = "Imported Peaks";
             }
 
-            PlotFrame.Title = spectrum.FileName ?? spectrum.Name;
+            ScatterSeries peaksSeries = BuildScatterSeries(spectrum.Peaks, peakSeriesName, onSeriesClicked);
 
-            var series = BuildSeries(spectrum, trackerKey);
+            PlotFrame.Series.Add(optimizedSeries);
+            PlotFrame.Series.Add(peaksSeries);
 
-            series.Points.AddRange(spectrum.Bins.Select(x => (DataPoint)x));
+            RecountPlotAxes(spectrum.Optimized.Data); // TODO: REcount by all transition types, not only source.
 
-            if (onSeriesClicked != null)
+            foreach (var item in spectrum.Peaks.Data)
             {
-                series.MouseDown += (s, e) => { onSeriesClicked(s, e); };
+                this.Selection = Plotter.StageType.Automatic;
+                this.MarkPeak(item.X, item.Y, peakSeriesName);
+                this.Selection = Plotter.StageType.CanBeManual;
             }
 
-            PlotFrame.Series.Add(series);
-            RecountPlotAxes(spectrum);
             PlotFrame.InvalidatePlot(true);
         }
 
-        private LineSeries BuildSeries(Spectrum spectrum, string trackerKey)
+        private ScatterSeries BuildScatterSeries(SpectrumTransition peaks, string peakSeriesName, Action<object, OxyMouseDownEventArgs> onSeriesClicked)
+        {
+            ScatterSeries result;
+            Series existingSeries = GetExistingSeries(peakSeriesName);
+            if (existingSeries != null)
+            {
+                result = existingSeries as ScatterSeries;
+            }
+            else
+            {
+                result = CreatePeakSeries(peakSeriesName); // (string)Application.Current.Resources["str_plotter_PeakSeriesTitle"]
+            }
+
+            if (onSeriesClicked != null)
+            {
+                result.MouseDown += (s, e) => { onSeriesClicked(s, e); };
+            }
+            return result;
+        }
+
+        private LineSeries BuildLineSeries(SpectrumTransition transition)
         {
             var series = new LineSeries()
             {
                 StrokeThickness = 1,
-                Title = spectrum.Name,
-                TrackerKey = trackerKey ?? spectrum.Name.ToLower()
+                Title = transition.Name
             };
 
-            switch (spectrum.Name)
+            switch (transition.Name)
             {
-                case "Original":
+                case "Source":
                     {
                         series.Color = OxyColors.Red;
                         series.MarkerType = MarkerType.Circle;
@@ -95,7 +127,7 @@ namespace SpectrumAnalyzer.Models
                         series.MarkerResolution = 50;
                         break;
                     }
-                case "Searched":
+                case "Optimized":
                     {
                         series.Color = OxyColors.Blue;
                         series.MarkerType = MarkerType.Square;
@@ -120,6 +152,8 @@ namespace SpectrumAnalyzer.Models
                     }
             }
 
+            series.Points.AddRange(transition.Data.Select(bin => (DataPoint)bin));
+
             return series;
         }
 
@@ -133,11 +167,11 @@ namespace SpectrumAnalyzer.Models
             PlotFrame.InvalidatePlot(true);
         }
 
-        internal void MarkPeak(double x, double y)
+        internal void MarkPeak(double x, double y, string peakSeriesName)
         {
             if (this.Initialized)
             {
-                ScatterSeries peakSeries = InstantinatePeakMarkSeries();
+                ScatterSeries peakSeries = PlotFrame.Series.First(s => s.Title == peakSeriesName) as ScatterSeries;
 
                 if (Selection == StageType.CanBeManual)
                 {
@@ -190,22 +224,7 @@ namespace SpectrumAnalyzer.Models
             return points.Where(point => point.X > basePoint - windowSize && point.X < basePoint + windowSize).ToList();
         }
 
-        private ScatterSeries InstantinatePeakMarkSeries()
-        {
-            Series existingSeries = GetExistingSeries("peaks");
-            if (existingSeries != null)
-            {
-                return existingSeries as ScatterSeries;
-            }
-            else
-            {
-                var s = CreatePeakSeries();
-                this.PlotFrame.Series.Add(s);
-                return GetExistingSeries("peaks") as ScatterSeries;
-            }
-        }
-
-        private ScatterSeries CreatePeakSeries()
+        private ScatterSeries CreatePeakSeries(string title)
         {
             var customMarker = new List<ScreenPoint>()
             {
@@ -220,27 +239,26 @@ namespace SpectrumAnalyzer.Models
             {
                 MarkerType = MarkerType.Custom,
                 MarkerOutline = customMarker.ToArray(),
-                MarkerFill = OxyColors.DarkRed,
+                MarkerFill = title == "Peaks" ? OxyColors.DarkRed : OxyColors.LightBlue, // TODO: убрать этот костыль
                 MarkerSize = 10,
                 RenderInLegend = false,
-                TrackerKey = "peaks",
-                Title = (string)Application.Current.Resources["str_plotter_PeakSeriesTitle"]
+                Title = title
             };
 
             return s;
         }
 
-        public Series GetExistingSeries(string key)
+        public Series GetExistingSeries(string name)
         {
-            return this.PlotFrame.Series.FirstOrDefault(s => s.TrackerKey == key);
+            return this.PlotFrame.Series.FirstOrDefault(s => s.Title == name);
         }
 
-        private void RecountPlotAxes(Spectrum spectrum)
+        private void RecountPlotAxes(List<Bin> dataBins)
         {
-            double minX = spectrum.Bins.Min(x => x.X);
-            double maxX = spectrum.Bins.Max(x => x.X);
-            double minY = spectrum.Bins.Min(x => x.Y);
-            double maxY = spectrum.Bins.Max(x => x.Y);
+            double minX = dataBins.Min(x => x.X);
+            double maxX = dataBins.Max(x => x.X);
+            double minY = dataBins.Min(x => x.Y);
+            double maxY = dataBins.Max(x => x.Y);
 
             foreach (var series in PlotFrame.Series.OfType<LineSeries>())
             {

@@ -8,8 +8,7 @@ namespace SpectrumAnalyzer.Helpers
 {
     public enum SpectrumType
     {
-        Standard = 0,
-        Peaks = 1,
-        Imported = 2
+        Analyzed = 0,
+        Imported = 1
     }
 }

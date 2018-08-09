@@ -1,5 +1,7 @@
-﻿using SQLite.Net;
+﻿using SpectrumAnalyzer.Helpers;
+using SQLite.Net;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SpectrumAnalyzer.Models
@@ -21,6 +23,22 @@ namespace SpectrumAnalyzer.Models
                 localDbConnection = new SQLiteConnection(new SQLite.Net.Platform.Win32.SQLitePlatformWin32(), databaseFileName);
             }
             return localDbConnection;
+        }
+
+        internal static List<Bin> ParseSpectrum(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+            {
+                throw new ArgumentNullException("Peak data can't be null.");
+            }
+            var s = data.Split(';');
+            var result = new List<Bin>();
+            foreach (var x in s)
+            {
+                var arr = x.Split(':');
+                result.Add(new Bin(arr[0], arr[1]));
+            }
+            return result;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using OxyPlot;
+using System;
 using System.Globalization;
 
 namespace SpectrumAnalyzer.Helpers
@@ -19,6 +20,25 @@ namespace SpectrumAnalyzer.Helpers
         {
             X = x;
             Y = y;
+        }
+
+        public static Bin Parse(string str)
+        {
+            string result = string.Empty;
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (Char.IsDigit(str[i]) || str[i] == '.' || str[i] == ',' || str[i] == '-')
+                {
+                    result += str[i];
+                }
+                else
+                {
+                    result += ";";
+                }
+            }
+            string[] splitted = result.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            return new Bin(splitted[0], splitted[1]);
         }
 
         public override string ToString()
