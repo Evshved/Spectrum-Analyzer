@@ -104,7 +104,7 @@ namespace SpectrumAnalyzer.ViewModels
         {
             get
             {
-                return Transitions.Any(x => x.Name == "Searched") ? true : false;
+                return Transitions.Any(x => x.Name == "Optimized") ? true : false;
             }
         }
 
