@@ -56,13 +56,13 @@ namespace SpectrumAnalyzer.Models
         public void Plot(Spectrum spectrum, Action<object, OxyMouseDownEventArgs> onSeriesClicked, SpectrumType spectrumType)
         {
             LineSeries sourceSeries;
-            LineSeries optimizedSeries = BuildLineSeries(spectrum.Optimized);
+            LineSeries optimizedSeries = BuildLineSeries(spectrum.Optimized, onSeriesClicked);
             var peakSeriesName = string.Empty;
 
             if (spectrumType == SpectrumType.Analyzed)
             {
                 PlotFrame.Title = spectrum.Name;
-                sourceSeries = BuildLineSeries(spectrum.Source);
+                sourceSeries = BuildLineSeries(spectrum.Source, null);
                 PlotFrame.Series.Add(sourceSeries);
                 peakSeriesName = "Peaks";
             }
@@ -71,7 +71,7 @@ namespace SpectrumAnalyzer.Models
                 peakSeriesName = "Imported Peaks";
             }
 
-            ScatterSeries peaksSeries = BuildScatterSeries(spectrum.Peaks, peakSeriesName, onSeriesClicked);
+            ScatterSeries peaksSeries = BuildScatterSeries(spectrum.Peaks, peakSeriesName);
 
             PlotFrame.Series.Add(optimizedSeries);
             PlotFrame.Series.Add(peaksSeries);
@@ -88,7 +88,7 @@ namespace SpectrumAnalyzer.Models
             PlotFrame.InvalidatePlot(true);
         }
 
-        private ScatterSeries BuildScatterSeries(SpectrumTransition peaks, string peakSeriesName, Action<object, OxyMouseDownEventArgs> onSeriesClicked)
+        private ScatterSeries BuildScatterSeries(SpectrumTransition peaks, string peakSeriesName)
         {
             ScatterSeries result;
             Series existingSeries = GetExistingSeries(peakSeriesName);
@@ -101,14 +101,10 @@ namespace SpectrumAnalyzer.Models
                 result = CreatePeakSeries(peakSeriesName); // (string)Application.Current.Resources["str_plotter_PeakSeriesTitle"]
             }
 
-            if (onSeriesClicked != null)
-            {
-                result.MouseDown += (s, e) => { onSeriesClicked(s, e); };
-            }
             return result;
         }
 
-        private LineSeries BuildLineSeries(SpectrumTransition transition)
+        private LineSeries BuildLineSeries(SpectrumTransition transition, Action<object, OxyMouseDownEventArgs> onSeriesClicked)
         {
             var series = new LineSeries()
             {
@@ -134,6 +130,10 @@ namespace SpectrumAnalyzer.Models
                         series.MarkerSize = 2;
                         series.MarkerFill = OxyColors.Blue;
                         series.MarkerResolution = 50;
+                        if (onSeriesClicked != null)
+                        {
+                            series.MouseDown += (s, e) => { onSeriesClicked(s, e); };
+                        }
                         break;
                     }
                 case "Imported":
